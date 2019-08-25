@@ -1,0 +1,18 @@
+# Only look for device with this specific hardware address.
+# If unspecified or empty string, will use the first DualShock 4 device found.
+# device_addr: 30:0E:D5:95:8D:6A
+
+# Whether to use hidraw or raw bluetooth mode. See docs in ds4drv for the
+# difference.
+# Options: hidraw, bluetooth
+# backend: hidraw
+
+# Whether to use standard ROS messages or messages defined in ds4_ros.
+# If true, will publish sensor_msgs/{Joy,BatteryState,Imu}, ds4_ros/Report,
+# and subscribe to sensor_msgs/JoyFeedbackArray.
+# If false, will publish ds4_ros/Status and subscribe to ds4_ros/Feedback.
+use_standard_msgs: false
+
+# Amount by which the joystick has to move before it is considered to be
+# off-center.
+deadzone: 0.05

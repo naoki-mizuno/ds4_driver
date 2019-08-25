@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="addr" default="" />
+  <arg name="use_standard_msgs" default="false" />
+
+  <node pkg="ds4_ros" type="ds4_ros_node.py" name="ds4_ros" output="screen" >
+    <rosparam command="load" file="$(find ds4_ros)/config/params.yaml" />
+
+    <param name="device_addr" value="$(arg addr)" />
+    <param name="use_standard_msgs" value="$(arg use_standard_msgs)" />
+  </node>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="ds4_to_imu"
+    args="0 0.05 -0.01 -1.5707 0 1.5707 ds4 ds4_imu" />
+</launch>
