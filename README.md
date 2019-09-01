@@ -24,6 +24,14 @@ $ sudo udevadm control --reload-rules
 $ sudo udevadm trigger
 ```
 
+Note: If you want to prevent the touchpad from being recognized as an input
+device, add the following to the udev rules and run the `udevadm` commands
+(you will still be able to use the touchpad from this driver):
+
+```
+SUBSYSTEM=="input", ATTRS{name}=="*Wireless Controller Touchpad", RUN+="/bin/rm %E{DEVNAME}", ENV{ID_INPUT_JOYSTICK}=""
+```
+
 Compile and source this package just like any other ROS package. To run,
 
 ```console
