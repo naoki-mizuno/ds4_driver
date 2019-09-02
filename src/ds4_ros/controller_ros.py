@@ -18,7 +18,7 @@ class ControllerRos(Controller):
         super(ControllerRos, self).__init__()
 
         self.use_standard_msgs = rospy.get_param('~use_standard_msgs', False)
-        self.deadzone = rospy.get_param('~deadzone', 0.05)
+        self.deadzone = rospy.get_param('~deadzone', 0.1)
         self.frame_id = rospy.get_param('~frame_id', 'ds4')
         self.imu_frame_id = rospy.get_param('~imu_frame_id', 'ds4_imu')
         self.rumble_timer = None

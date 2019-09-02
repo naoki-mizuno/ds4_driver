@@ -15,4 +15,4 @@ use_standard_msgs: false
 
 # Amount by which the joystick has to move before it is considered to be
 # off-center.
-deadzone: 0.05
+deadzone: 0.1
