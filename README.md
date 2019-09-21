@@ -10,8 +10,8 @@ DualShock 4 driver for ROS.
 
 ## Usage
 
-Download the latest `ds4drv` from GitHub. Some features of `ds4_ros` depend on
-pull requests have not yet been merged, so until then, use
+This driver depends on `ds4drv`. Some features of this driver depend on pull
+requests have not yet been merged upstream. Until they are merged, use
 [`naoki-mizuno/ds4drv`](https://github.com/naoki-mizuno/ds4drv/tree/devel)
 (`devel` branch).
 

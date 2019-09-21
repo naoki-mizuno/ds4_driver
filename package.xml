@@ -2,7 +2,7 @@
 <package format="2">
   <name>ds4_ros</name>
   <version>0.1.0</version>
-  <description>ds4_ros package</description>
+  <description>ROS driver for the DualShock 4 controller</description>
 
   <maintainer email="naoki.mizuno.256@gmail.com">Naoki Mizuno</maintainer>
 
