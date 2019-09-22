@@ -22,7 +22,6 @@ class ControllerRos(Controller):
         self.deadzone = rospy.get_param('~deadzone', 0.1)
         self.frame_id = rospy.get_param('~frame_id', 'ds4')
         self.imu_frame_id = rospy.get_param('~imu_frame_id', 'ds4_imu')
-        self.rumble_timer = None
 
         # Use ROS-standard messages (like sensor_msgs/Joy)
         if self.use_standard_msgs:
@@ -96,9 +95,9 @@ class ControllerRos(Controller):
 
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
-            self.rumble_timer = rospy.Timer(rospy.Duration(msg.rumble_duration),
-                                            self.cb_stop_rumble,
-                                            oneshot=True)
+            rospy.Timer(rospy.Duration(msg.rumble_duration),
+                        self.cb_stop_rumble,
+                        oneshot=True)
 
     def cb_stop_rumble(self, event):
         try:
