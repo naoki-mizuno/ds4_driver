@@ -10,6 +10,7 @@ from ds4_ros.msg import Feedback
 from ds4_ros.msg import Report
 from ds4_ros.msg import Status
 
+import copy
 import math
 
 
@@ -141,7 +142,7 @@ class ControllerRos(Controller):
     @staticmethod
     def _report_to_status_(report_msg, deadzone=0.05):
         status_msg = Status()
-        status_msg.header = report_msg.header
+        status_msg.header = copy.deepcopy(report_msg.header)
 
         # Sticks (signs are flipped for consistency with other joypads)
         status_msg.axis_left_x = -ControllerRos._normalize_axis_(report_msg.left_analog_x, deadzone)
@@ -164,7 +165,7 @@ class ControllerRos(Controller):
             setattr(status_msg, attr, val)
 
         # IMU (X: right, Y: up, Z: towards user)
-        status_msg.imu.header = status_msg.header
+        status_msg.imu.header = copy.deepcopy(status_msg.header)
         # To m/s^2: 0.98 mg/LSB (BMI055 data sheet Chapter 5.2.1)
         def to_mpss(v): return float(v) / (2**13 - 1) * 9.80665 * 0.98
         # To rad/s: 32767: 2000 deg/s (BMI055 data sheet Chapter 7.2.1)
@@ -228,7 +229,7 @@ class ControllerRos(Controller):
         :return:
         """
         msg = Joy()
-        msg.header = status.header
+        msg.header = copy.deepcopy(status.header)
         msg.axes = [
             status.axis_left_x,
             status.axis_left_y,
