@@ -11,7 +11,11 @@
 # If true, will publish sensor_msgs/{Joy,BatteryState,Imu}, ds4_ros/Report,
 # and subscribe to sensor_msgs/JoyFeedbackArray.
 # If false, will publish ds4_ros/Status and subscribe to ds4_ros/Feedback.
-use_standard_msgs: false
+use_standard_msgs: true
+
+# Only publish Joy messages when changes to axes or buttons is detected.
+# This parameter is only effective when use_standard_msgs is true.
+pub_joy_on_change: true
 
 # Amount by which the joystick has to move before it is considered to be
 # off-center.

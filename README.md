@@ -49,6 +49,9 @@ $ rosrun ds4_ros ds4_ros_node.py
   tested. Refer to the docs in `ds4drv` for details.
 - `~use_standard_msgs` (default: `false`): use ROS-standard messages such as
   `sensor_msgs/Joy`.
+- `~pub_joy_on_change` (default: `true`): only publish Joy messages when
+  changes to axes or buttons is detected. This parameter is only effective
+  when `use_standard_msgs` is `true`.
 - `~deadzone` (default: 0.05): amount by which the joystick has to move before
   it is considered to be off-center.
 - `~frame_id`: (default: `ds4`): frame ID to be used for the messages.

@@ -22,6 +22,9 @@ class ControllerRos(Controller):
         self.deadzone = rospy.get_param('~deadzone', 0.1)
         self.frame_id = rospy.get_param('~frame_id', 'ds4')
         self.imu_frame_id = rospy.get_param('~imu_frame_id', 'ds4_imu')
+        # Only publish Joy messages on change
+        self.pub_joy_on_change = rospy.get_param('~pub_joy_on_change', True)
+        self._prev_joy = None
 
         # Use ROS-standard messages (like sensor_msgs/Joy)
         if self.use_standard_msgs:
@@ -67,8 +70,13 @@ class ControllerRos(Controller):
             imu_msg = self._status_to_imu_(status_msg)
             self.pub_report.publish(report_msg)
             self.pub_battery.publish(battery_msg)
-            self.pub_joy.publish(joy_msg)
+            if self._prev_joy is None \
+                    or joy_msg.axes != self._prev_joy.axes \
+                    or joy_msg.buttons != self._prev_joy.buttons:
+                self.pub_joy.publish(joy_msg)
             self.pub_imu.publish(imu_msg)
+
+            self._prev_joy = joy_msg
         else:
             self.pub_status.publish(status_msg)
 
