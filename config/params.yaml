@@ -7,10 +7,11 @@
 # Options: hidraw, bluetooth
 # backend: hidraw
 
-# Whether to use standard ROS messages or messages defined in ds4_ros.
-# If true, will publish sensor_msgs/{Joy,BatteryState,Imu}, ds4_ros/Report,
+# Whether to use standard ROS messages or messages defined in ds4_driver.
+# If true, will publish sensor_msgs/{Joy,BatteryState,Imu}, ds4_driver/Report,
 # and subscribe to sensor_msgs/JoyFeedbackArray.
-# If false, will publish ds4_ros/Status and subscribe to ds4_ros/Feedback.
+# If false, will publish ds4_driver/Status and subscribe to
+# ds4_driver/Feedback.
 use_standard_msgs: true
 
 # Only publish Joy messages when changes to axes or buttons is detected.

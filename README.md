@@ -1,4 +1,4 @@
-# ds4_ros
+# ds4_driver
 
 DualShock 4 driver for ROS.
 
@@ -35,9 +35,9 @@ SUBSYSTEM=="input", ATTRS{name}=="*Wireless Controller Touchpad", RUN+="/bin/rm 
 Compile and source this package just like any other ROS package. To run,
 
 ```console
-$ roslaunch ds4_ros ds4_ros.launch
+$ roslaunch ds4_driver ds4_driver.launch
 # Or
-$ rosrun ds4_ros ds4_ros_node.py
+$ rosrun ds4_driver ds4_driver_node.py
 ```
 
 ## Parameters
@@ -62,11 +62,11 @@ $ rosrun ds4_ros ds4_ros_node.py
 
 ### Published
 
-- `/status` (`ds4_ros/Status`): current state of the device.
+- `/status` (`ds4_driver/Status`): current state of the device.
 
 ### Subscribed
 
-- `/set_feedback` (`ds4_ros/Feedback`): feedback for the device such as
+- `/set_feedback` (`ds4_driver/Feedback`): feedback for the device such as
   LED color, rumble, and LED flash.
 
 Note: To disable flash, send message with `set_led_flash: true` and
@@ -77,7 +77,7 @@ Note: To disable flash, send message with `set_led_flash: true` and
 
 ### Published
 
-- `/raw_report` (`ds4_ros/Report`): raw, uninterpreted report that the device
+- `/raw_report` (`ds4_driver/Report`): raw, uninterpreted report that the device
   sends.
 - `/battery` (`sensor_msgs/BatteryState`): battery state of the device.
 - `/joy` (`sensor_msgs/Joy`): joypad state.

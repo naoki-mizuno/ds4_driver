@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from ds4_ros.logger import Logger
-from ds4_ros.controller_ros import ControllerRos
+from ds4_driver.logger import Logger
+from ds4_driver.controller_ros import ControllerRos
 
 from ds4drv.backends import BluetoothBackend, HidrawBackend
 from ds4drv.exceptions import BackendError
@@ -23,7 +23,7 @@ class SignalHandler(object):
 
 
 def main():
-    rospy.init_node('ds4_ros_node')
+    rospy.init_node('ds4_driver_node')
 
     device_addr = rospy.get_param('~device_addr', None)
     backend_type = rospy.get_param('~backend', 'hidraw')

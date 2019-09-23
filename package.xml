@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ds4_ros</name>
+  <name>ds4_driver</name>
   <version>0.1.0</version>
   <description>ROS driver for the DualShock 4 controller</description>
 
   <maintainer email="naoki.mizuno.256@gmail.com">Naoki Mizuno</maintainer>
 
-  <url type="website">http://wiki.ros.org/ds4_ros</url>
+  <url type="website">http://wiki.ros.org/ds4_driver</url>
 
   <license>MIT</license>
 

@@ -6,9 +6,9 @@ from sensor_msgs.msg import Joy
 from sensor_msgs.msg import JoyFeedback
 from sensor_msgs.msg import JoyFeedbackArray
 from sensor_msgs.msg import Imu
-from ds4_ros.msg import Feedback
-from ds4_ros.msg import Report
-from ds4_ros.msg import Status
+from ds4_driver.msg import Feedback
+from ds4_driver.msg import Report
+from ds4_driver.msg import Status
 
 import copy
 import math
@@ -82,7 +82,7 @@ class ControllerRos(Controller):
 
     def cb_feedback(self, msg):
         """
-        Callback method for ds4_ros/Feedback
+        Callback method for ds4_driver/Feedback
         :param msg:
         :type msg: Feedback
         :return:
@@ -230,7 +230,7 @@ class ControllerRos(Controller):
     @staticmethod
     def _status_to_joy_(status):
         """
-        Converts a ds4_ros/Status message to sensor_msgs/Joy
+        Converts a ds4_driver/Status message to sensor_msgs/Joy
         :param status:
         :type status: Status
         :return:
@@ -270,7 +270,7 @@ class ControllerRos(Controller):
     @staticmethod
     def _status_to_battery_(status):
         """
-        Converts a ds4_ros/Status to sensor_msgs/BatteryState
+        Converts a ds4_driver/Status to sensor_msgs/BatteryState
         Reference: https://www.psdevwiki.com/ps4/DualShock_4#Specifications
         :param status:
         :type status: Status
@@ -296,7 +296,7 @@ class ControllerRos(Controller):
     @staticmethod
     def _status_to_imu_(status):
         """
-        Converts a ds4_ros/Status to sensor_msgs/Imu
+        Converts a ds4_driver/Status to sensor_msgs/Imu
         :param status:
         :type status: Status
         :return:

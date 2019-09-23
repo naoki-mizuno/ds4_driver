@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ds4_ros)
+project(ds4_driver)
 
 find_package(catkin REQUIRED COMPONENTS
   message_generation
@@ -23,6 +23,6 @@ generate_messages(
 catkin_package()
 
 # catkin_install_python(PROGRAMS
-#   nodes/ds4_ros_node.py
+#   nodes/ds4_driver_node.py
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )

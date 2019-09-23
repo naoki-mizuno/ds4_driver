@@ -41,8 +41,8 @@ float32 battery_percentage  # [0.0, 1.0]
 int32 battery_full_charging # 0: No, 1: Yes
 
 # Trackpads
-ds4_ros/Trackpad touch0
-ds4_ros/Trackpad touch1
+ds4_driver/Trackpad touch0
+ds4_driver/Trackpad touch1
 
 # Plugs
 int32 plug_usb              # 0: No, 1: Yes
