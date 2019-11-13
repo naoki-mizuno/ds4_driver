@@ -40,6 +40,19 @@ $ roslaunch ds4_driver ds4_driver.launch
 $ rosrun ds4_driver ds4_driver_node.py
 ```
 
+You can also try out some of the features of this package including touchpad,
+rumble, and LED control by running:
+
+```
+$ roslaunch ds4_driver sample.launch
+```
+
+Moving the left/right stick controls the rumble. Sliding left and right on the
+touchpad while pressing circle, triangle, cross buttons controls the
+brightness of the red, green, blue LED, respectively (you can tell from the
+color of the button).  Pressing the PS button triggers the flashing of the
+LED.
+
 ## Parameters
 
 - `~device_addr`: hardware address of the device. If unspecified, will use the
