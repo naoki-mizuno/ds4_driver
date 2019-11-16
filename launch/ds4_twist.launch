@@ -10,7 +10,7 @@
     <arg name="use_standard_msgs" value="false" />
   </include>
 
-  <node pkg="ds4_driver" type="ds4_twist.py" name="ds4_twist" output="screen" >
+  <node pkg="ds4_driver" type="ds4_twist_node.py" name="ds4_twist" output="screen" >
     <rosparam command="load" file="$(find ds4_driver)/config/twist_$(arg dof)dof.yaml" />
 
     <param name="stamped" value="$(arg stamped)" />
