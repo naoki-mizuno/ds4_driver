@@ -1,0 +1,14 @@
+stamped: false
+inputs:
+  linear:
+    x: axis_left_y
+  angular:
+    # Use L2 and R2 for rotation
+    # z: axis_l2 - axis_r2
+    # Use right horizontal stick for rotation
+    z: axis_right_x
+scales:
+  linear:
+    x: 1.5
+  angular:
+    z: 0.5
