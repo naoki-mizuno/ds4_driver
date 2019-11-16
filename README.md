@@ -9,8 +9,9 @@ DualShock 4 driver for ROS.
 - Get information such as IMU, battery, and touchpad from your DualShock 4.
 - Use feedback such as rumble, LED color, and LED flash via ROS topics.
 - Connect to your controller via Bluetooth.
+- Utility node included to publish velocity commands from inputs
 
-## Usage
+## Installation and Usage
 
 This driver depends on `ds4drv`. Some features of this driver depend on pull
 requests have not yet been merged upstream. Until they are merged, use
@@ -26,20 +27,30 @@ $ sudo udevadm control --reload-rules
 $ sudo udevadm trigger
 ```
 
-Note: If you want to prevent the touchpad from being recognized as an input
-device, add the following to the udev rules and run the `udevadm` commands
-(you will still be able to use the touchpad from this driver):
-
-```
-SUBSYSTEM=="input", ATTRS{name}=="*Wireless Controller Touchpad", RUN+="/bin/rm %E{DEVNAME}", ENV{ID_INPUT_JOYSTICK}=""
-```
-
 Compile and source this package just like any other ROS package. To run,
 
 ```console
 $ roslaunch ds4_driver ds4_driver.launch
 # Or
 $ rosrun ds4_driver ds4_driver_node.py
+```
+
+### Disable touchpad input device
+
+Note: You can skip this section if you use the forked version of `ds4drv`
+(i.e. `naoki-mizuno/ds4drv`) because the following line is included in the
+udev rules by default.
+
+By default the touchpad of the DualShock 4 is recognized as an input device.
+Because of this, the mouse moves to the location on screen that corresponds to
+the location touched, making it very hard to track the mouse cursor (and
+worse, it automatically clicks at that location). If you want to prevent the
+touchpad from being recognized as an input device, add the following to the
+udev rules and run the `udevadm` commands (you will still be able to use the
+touchpad from this driver):
+
+```
+SUBSYSTEM=="input", ATTRS{name}=="*Wireless Controller Touchpad", RUN+="/bin/rm %E{DEVNAME}", ENV{ID_INPUT_JOYSTICK}=""
 ```
 
 ## Demonstration
@@ -73,7 +84,7 @@ This is the main node that interacts with DualShock 4.
 - `~pub_joy_on_change` (default: `true`): only publish Joy messages when
   changes to axes or buttons is detected. This parameter is only effective
   when `use_standard_msgs` is `true`.
-- `~deadzone` (default: 0.05): amount by which the joystick has to move before
+- `~deadzone` (default: 0.1): amount by which the joystick has to move before
   it is considered to be off-center.
 - `~frame_id`: (default: `ds4`): frame ID to be used for the messages.
 - `~imu_frame_id` (default: `ds4_imu`): frame ID to be used for the IMU
@@ -118,8 +129,8 @@ for a DualShock 4.
 ### Parameters
 
 - `~stamped` (default: `false`): whether to publish `Twist` or `TwistStamped`
-  for the output velocity command. For robots such as PR2 and Husky,
-  `/cmd_vel` is not stamped (i.e.  `Twist` is used) but stamped velocity
+  for the output velocity command. For robots such as TurtleBot, Husky, and
+  PR2 `/cmd_vel` is not stamped (i.e.  `Twist` is used) but stamped velocity
   commands may be required for some applications.
 - `~inputs`: what buttons and axes to use for the value of each velocity
   vector. Expressions can be used to combine values of multiple keys (see
