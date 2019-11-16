@@ -42,8 +42,10 @@ $ roslaunch ds4_driver ds4_driver.launch
 $ rosrun ds4_driver ds4_driver_node.py
 ```
 
-You can also try out some of the features of this package including touchpad,
-rumble, and LED control by running:
+## Sample
+
+Get a glimpse of some of the features of `ds4_driver` including touchpad,
+rumble, and LED control:
 
 ```
 $ roslaunch ds4_driver sample.launch
@@ -55,7 +57,11 @@ brightness of the red, green, blue LED, respectively (you can tell from the
 color of the button).  Pressing the PS button triggers the flashing of the
 LED.
 
-## Parameters
+## ds4_driver_node.py
+
+This is the main node that interacts with DualShock 4.
+
+### Parameters
 
 - `~device_addr`: hardware address of the device. If unspecified, will use the
   first device found.
@@ -73,13 +79,13 @@ LED.
 - `~imu_frame_id` (default: `ds4_imu`): frame ID to be used for the IMU
   messages.
 
-## Topics
+### Topics
 
-### Published
+#### Published
 
 - `/status` (`ds4_driver/Status`): current state of the device.
 
-### Subscribed
+#### Subscribed
 
 - `/set_feedback` (`ds4_driver/Feedback`): feedback for the device such as
   LED color, rumble, and LED flash.
@@ -88,9 +94,9 @@ Note: To disable flash, send message with `set_led_flash: true` and
 `led_flash_off: 0`.
 
 
-## Topics (when `use_standard_msgs` is `true`)
+### Topics (when `use_standard_msgs` is `true`)
 
-### Published
+#### Published
 
 - `/raw_report` (`ds4_driver/Report`): raw, uninterpreted report that the device
   sends.
@@ -98,9 +104,38 @@ Note: To disable flash, send message with `set_led_flash: true` and
 - `/joy` (`sensor_msgs/Joy`): joypad state.
 - `/imu` (`sensor_msgs/Imu`): IMU state.
 
-### Subscribed
+#### Subscribed
 
 - `/set_feedback` (`sensor_msgs/JoyFeedbackArray`): feedback for the device.
+
+## ds4_twist_node.py
+
+A node to convert joypad inputs to velocity commands is included in this
+package. This node is something similar to
+[`teleop_twist_joy`](http://wiki.ros.org/teleop_twist_joy) but is specifically
+for a DualShock 4.
+
+### Parameters
+
+- `~stamped` (default: `false`): whether to publish `Twist` or `TwistStamped`
+  for the output velocity command. For robots such as PR2 and Husky,
+  `/cmd_vel` is not stamped (i.e.  `Twist` is used) but stamped velocity
+  commands may be required for some applications.
+- `~inputs`: what buttons and axes to use for the value of each velocity
+  vector. Expressions can be used to combine values of multiple keys (see
+  `config/twist_6dof.yaml` for examples).
+- `~scales`: scaling factor for each velocity vector.
+
+### Topics
+
+#### Published
+
+- `/cmd_vel` (`geometry_msgs/Twist` or `geometry_msgs/TwistStamped`): velocity
+  command.
+
+#### Subscribed
+
+- `/status` (`ds4_driver/Status`): joypad state.
 
 ## License
 
