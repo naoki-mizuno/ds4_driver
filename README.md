@@ -42,13 +42,13 @@ $ roslaunch ds4_driver ds4_driver.launch
 $ rosrun ds4_driver ds4_driver_node.py
 ```
 
-## Sample
+## Demonstration
 
 Get a glimpse of some of the features of `ds4_driver` including touchpad,
 rumble, and LED control:
 
 ```
-$ roslaunch ds4_driver sample.launch
+$ roslaunch ds4_driver demo.launch
 ```
 
 Moving the left/right stick controls the rumble. Sliding left and right on the
