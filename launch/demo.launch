@@ -2,7 +2,7 @@
 <launch>
   <arg name="addr" default="" />
 
-  <node pkg="ds4_driver" type="sample.py" name="sample" />
+  <node pkg="ds4_driver" type="demo.py" name="demo" />
 
   <include file="$(find ds4_driver)/launch/ds4_driver.launch" >
     <arg name="addr" value="$(arg addr)" />
