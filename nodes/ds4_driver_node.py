@@ -56,7 +56,8 @@ def main():
             if not controller.is_alive():
                 controller.start()
             controller.loop.register_event('device-report', controller.cb_report)
-        rospy.loginfo('Waiting for specified controller')
+        else:
+            rospy.loginfo("...but it's not the one we're looking for :(")
 
 
 if __name__ == '__main__':
