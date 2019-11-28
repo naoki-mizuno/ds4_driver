@@ -53,13 +53,11 @@ def main():
         rospy.loginfo('Connected to {0}'.format(device.name))
         if device_addr in (None, '', device.device_addr):
             controller.setup_device(device)
-            break
-        rospy.loginfo('Waiting for specified controller')
-
-    controller.start()
-    controller.loop.register_event('device-report', controller.cb_report)
-
-    rospy.spin()
+            if not controller.is_alive():
+                controller.start()
+            controller.loop.register_event('device-report', controller.cb_report)
+        else:
+            rospy.loginfo("...but it's not the one we're looking for :(")
 
 
 if __name__ == '__main__':

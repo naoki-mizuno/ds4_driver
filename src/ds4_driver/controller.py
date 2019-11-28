@@ -32,6 +32,9 @@ class Controller(Thread):
         self.loop.add_watcher(device.report_fd, self.read_report)
 
     def cleanup_device(self):
+        if self.device is None:
+            return
+
         self.fire_event('device-cleanup')
         self.loop.remove_watcher(self.device.report_fd)
         self.device.close()
