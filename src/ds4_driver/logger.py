@@ -10,20 +10,21 @@ class Logger(object):
         return Logger(module)
 
     def error(self, msg, *args, **kwargs):
-        msg = self._format_msg_(msg)
-        rospy.logerr(msg, *args, **kwargs)
+        msg = self._format_msg_(msg, *args, **kwargs)
+        rospy.logerr(msg)
 
     def warning(self, msg, *args, **kwargs):
-        msg = self._format_msg_(msg)
-        rospy.logwarn(msg, *args, **kwargs)
+        msg = self._format_msg_(msg, *args, **kwargs)
+        rospy.logwarn(msg)
 
     def info(self, msg, *args, **kwargs):
-        msg = self._format_msg_(msg)
-        rospy.loginfo(msg, *args, **kwargs)
+        msg = self._format_msg_(msg, *args, **kwargs)
+        rospy.loginfo(msg, *args)
 
     def debug(self, msg, *args, **kwargs):
-        msg = self._format_msg_(msg)
-        rospy.logdebug(msg, *args, **kwargs)
+        msg = self._format_msg_(msg, *args, **kwargs)
+        rospy.logdebug(msg)
 
-    def _format_msg_(self, msg):
+    def _format_msg_(self, msg, *args, **kwargs):
+        msg = msg.format(*args, **kwargs)
         return '[{0}]: {1}'.format(self.module, msg)

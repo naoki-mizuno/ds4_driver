@@ -87,6 +87,9 @@ class ControllerRos(Controller):
         :type msg: Feedback
         :return:
         """
+        if self.device is None:
+            return
+
         def to_int(v): return int(v * 255)
         self.control(
             # LED color
