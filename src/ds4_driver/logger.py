@@ -19,7 +19,7 @@ class Logger(object):
 
     def info(self, msg, *args, **kwargs):
         msg = self._format_msg_(msg, *args, **kwargs)
-        rospy.loginfo(msg, *args)
+        rospy.loginfo(msg)
 
     def debug(self, msg, *args, **kwargs):
         msg = self._format_msg_(msg, *args, **kwargs)
