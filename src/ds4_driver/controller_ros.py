@@ -23,7 +23,7 @@ class ControllerRos(Controller):
         self.frame_id = rospy.get_param('~frame_id', 'ds4')
         self.imu_frame_id = rospy.get_param('~imu_frame_id', 'ds4_imu')
         # Only publish Joy messages on change
-        self.pub_joy_on_change = rospy.get_param('~pub_joy_on_change', True)
+        self._autorepeat_rate = rospy.get_param('~autorepeat_rate', 0)
         self._prev_joy = None
 
         # Use ROS-standard messages (like sensor_msgs/Joy)
@@ -33,6 +33,10 @@ class ControllerRos(Controller):
             self.pub_joy = rospy.Publisher('joy', Joy, queue_size=1)
             self.pub_imu = rospy.Publisher('imu', Imu, queue_size=1)
             self.sub_feedback = rospy.Subscriber('set_feedback', JoyFeedbackArray, self.cb_joy_feedback, queue_size=1)
+
+            if self._autorepeat_rate != 0:
+                period = 1.0 / self._autorepeat_rate
+                rospy.Timer(rospy.Duration.from_sec(period), self.cb_joy_pub_timer)
         else:
             self.pub_status = rospy.Publisher('status', Status, queue_size=1)
             self.sub_feedback = rospy.Subscriber('set_feedback', Feedback, self.cb_feedback, queue_size=1)
@@ -148,6 +152,10 @@ class ControllerRos(Controller):
                     feedback.rumble_big = jf.intensity
 
         self.cb_feedback(feedback)
+
+    def cb_joy_pub_timer(self, _):
+        if self._prev_joy is not None:
+            self.pub_joy.publish(self._prev_joy)
 
     @staticmethod
     def _report_to_status_(report_msg, deadzone=0.05):
