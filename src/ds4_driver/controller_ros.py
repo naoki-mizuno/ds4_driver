@@ -179,7 +179,7 @@ class ControllerRos(Controller):
         # To m/s^2: 0.98 mg/LSB (BMI055 data sheet Chapter 5.2.1)
         def to_mpss(v): return float(v) / (2**13 - 1) * 9.80665 * 0.98
         # To rad/s: 32767: 2000 deg/s (BMI055 data sheet Chapter 7.2.1)
-        def to_radps(v): return float(v) / (2**15 - 1) * math.pi / 180
+        def to_radps(v): return float(v) / (2**15 - 1) * math.pi / 180 * 2000
         # Convert
         status_msg.imu.linear_acceleration.x = to_mpss(report_msg.lin_acc_x)
         status_msg.imu.linear_acceleration.y = to_mpss(report_msg.lin_acc_y)
