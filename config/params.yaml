@@ -14,9 +14,11 @@
 # ds4_driver/Feedback.
 use_standard_msgs: true
 
-# Only publish Joy messages when changes to axes or buttons is detected.
+# Rate in Hz at which a joystick that has a non-changing state will resend the
+# previously sent message. When disabled (zero), only publish Joy messages
+# when changes to axes or buttons is detected.
 # This parameter is only effective when use_standard_msgs is true.
-pub_joy_on_change: true
+autorepeat_rate: 0.0
 
 # Amount by which the joystick has to move before it is considered to be
 # off-center.
