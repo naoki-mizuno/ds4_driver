@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import ds4drv
 from ds4drv.eventloop import EventLoop
 

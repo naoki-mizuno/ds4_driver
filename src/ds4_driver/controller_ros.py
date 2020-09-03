@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from .controller import Controller
 
 import rospy
