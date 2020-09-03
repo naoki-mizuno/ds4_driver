@@ -26,7 +26,7 @@ def main():
     rospy.init_node('ds4_driver_node')
 
     device_addr = rospy.get_param('~device_addr', None)
-    backend_type = rospy.get_param('~backend', 'hidraw')
+    backend_type = rospy.get_param('~backend', 'bluetooth')
 
     controller = ControllerRos()
 
@@ -36,7 +36,6 @@ def main():
     # using rospy.on_shutdown. Thus, we need to define our shutdown sequence
     # using signal.signal as is done in the original ds4drv script.
     signal.signal(signal.SIGINT, sigint_handler)
-
     if backend_type == 'bluetooth':
         backend = BluetoothBackend(Logger('backend'))
     else:
@@ -49,16 +48,26 @@ def main():
         rospy.signal_shutdown(str(err))
         sys.exit(1)
 
-    for device in backend.devices:
-        rospy.loginfo('Connected to {0}'.format(device.name))
-        if device_addr in (None, '', device.device_addr):
-            controller.setup_device(device)
+    # rospy.loginfo(device_addr)
+    if len(device_addr) < 8:
+        # scan exist device address
+        for device in backend.devices:
+            rospy.loginfo('Connected to {0}'.format(device.name))
+            if device_addr in (None, '', device.device_addr):
+                controller.setup_device(device)
             if not controller.is_alive():
                 controller.start()
             controller.loop.register_event('device-report', controller.cb_report)
         else:
             rospy.loginfo("...but it's not the one we're looking for :(")
-
+    else:
+        # connect exist device
+        device = None
+        while device==None: 
+            device = backend.specify_addr_connect(device_addr)
+        controller.setup_device(device)
+        controller.start()
+        controller.loop.register_event('device-report', controller.cb_report)
 
 if __name__ == '__main__':
     main()

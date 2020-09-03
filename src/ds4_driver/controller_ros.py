@@ -9,7 +9,6 @@ from sensor_msgs.msg import Imu
 from ds4_driver.msg import Feedback
 from ds4_driver.msg import Report
 from ds4_driver.msg import Status
-
 import copy
 import math
 
