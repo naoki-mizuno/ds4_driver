@@ -5,6 +5,7 @@
 !*.launch
 !*.msg
 !CMakeLists.txt
+!Dockerfile
 !package.xml
 !README.md
 !LICENSE.txt
