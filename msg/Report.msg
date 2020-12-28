@@ -1,5 +1,5 @@
 # Raw report from DualShock 4
-Header header
+std_msgs/Header header
 
 # Left: 0, Right: 255
 uint8 left_analog_x

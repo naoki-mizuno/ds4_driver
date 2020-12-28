@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
-import rospy
+import rclpy
 from ds4_driver.msg import Feedback, Status
 
 
 class Handler(object):
-    def __init__(self, status_topic='status', feedback_topic='set_feedback'):
+    def __init__(self, node, status_topic='status', feedback_topic='set_feedback'):
+        self._node = node
         self._min_interval = 0.1
-        self._last_pub_time = rospy.Time()
+        self._last_pub_time = self._node.get_clock().now()
         self._prev = Status()
         self._led = {
             'r': 0,
@@ -16,16 +17,19 @@ class Handler(object):
             'flashing': False,
         }
 
-        self._pub_feedback = rospy.Publisher(feedback_topic, Feedback, queue_size=1)
-        rospy.Subscriber(status_topic, Status, self.cb_status, queue_size=1)
+        self._pub_feedback = self._node.create_publisher(Feedback, feedback_topic, 0)
+        self._sub_status = self._node.create_subscription(Status, status_topic, self.cb_status, 0)
 
     def cb_status(self, msg):
         """
         :type msg: Status
         """
-        now = rospy.Time.now()
-        if (now - self._last_pub_time).to_sec() < self._min_interval:
-            return
+        now = self._node.get_clock().now()
+
+        # Commenting out this check for now because to_sec() does not seem to work for rclpy Duration objects
+        # This checks to see if the min interval for a callback has been violated.
+        # if (now - self._last_pub_time).to_sec() < self._min_interval:
+        #     return
 
         feedback = Feedback()
 
@@ -44,9 +48,9 @@ class Handler(object):
         if touch.active and msg.button_cross:
             feedback.set_led = True
             self._led['b'] = touch.x
-        feedback.led_r = self._led['r']
-        feedback.led_g = self._led['g']
-        feedback.led_b = self._led['b']
+        feedback.led_r = float(self._led['r'])
+        feedback.led_g = float(self._led['g'])
+        feedback.led_b = float(self._led['b'])
 
         # Turn on/off flash with PS button
         if not self._prev.button_ps and msg.button_ps:
@@ -64,11 +68,14 @@ class Handler(object):
 
 
 def main():
-    rospy.init_node('sample')
+    rclpy.init()
+    sample_node = rclpy.create_node('sample')
 
-    Handler()
+    Handler(sample_node)
 
-    rospy.spin()
+    rclpy.spin(sample_node)
+
+    rclpy.shutdown()
 
 
 if __name__ == '__main__':
