@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from ds4_driver.logger import Logger
 from ds4_driver.controller_ros import ControllerRos
