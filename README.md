@@ -13,6 +13,8 @@ DualShock 4 driver for ROS.
 
 ## Installation and Usage
 
+### Native
+
 This driver depends on `ds4drv`. Some features of this driver depend on pull
 requests have not yet been merged upstream. Until they are merged, use
 [`naoki-mizuno/ds4drv`](https://github.com/naoki-mizuno/ds4drv/tree/devel)
@@ -52,6 +54,33 @@ touchpad from this driver):
 
 ```
 SUBSYSTEM=="input", ATTRS{name}=="*Wireless Controller Touchpad", RUN+="/bin/rm %E{DEVNAME}", ENV{ID_INPUT_JOYSTICK}=""
+```
+
+### Docker
+
+The `Dockerfile` contained in the root of this respository has an example ROS2 Foxy container setup you might use. 
+
+```
+docker build -t ds4_driver/foxy .
+
+docker run -it  \
+  --device /dev/input \
+  --device /dev/snd \
+  --device /dev/hidraw0 \
+  --device /dev/hidraw1 \
+  --device /dev/hidraw2 \
+  --device /dev/hidraw3 \
+  --device /dev/hidraw4 \
+  --device /dev/hidraw5 \
+  --network=host \
+  ds4_driver/foxy
+
+# Now go into the container (`docker exec -it $CONTAINER_NAME bash`),
+# where $CONTAINER_NAME can be the name of the running container
+source install/setup.bash
+
+ros2 run ds4_driver 
+
 ```
 
 ## Demonstration
