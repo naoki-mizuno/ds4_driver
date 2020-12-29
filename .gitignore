@@ -1,6 +1,7 @@
 *
 !.gitignore
 !*.py
+!*.launch.xml
 !*.yaml
 !*.launch
 !*.msg

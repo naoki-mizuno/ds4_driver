@@ -56,7 +56,7 @@ class Handler(object):
         if not self._prev.button_ps and msg.button_ps:
             feedback.set_led_flash = True
             if self._led['flashing']:
-                feedback.led_flash_off = 0
+                feedback.led_flash_off = 0.0
             else:
                 feedback.led_flash_on = 0.2
                 feedback.led_flash_off = 0.2

@@ -25,10 +25,10 @@ class SignalHandler(object):
 def main():
     rclpy.init()
     node = rclpy.create_node('ds4_driver_node')
-    node.declare_parameter('~device_addr', None)
-    node.declare_parameter('~backend', 'hidraw')
-    device_addr = node.get_parameter('~device_addr').value
-    backend_type = node.get_parameter('~backend').value
+    node.declare_parameter('device_addr', None)
+    node.declare_parameter('backend', 'hidraw')
+    device_addr = node.get_parameter('device_addr').value
+    backend_type = node.get_parameter('backend').value
 
     controller = ControllerRos(node)
 

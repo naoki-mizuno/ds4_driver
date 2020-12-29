@@ -47,10 +47,12 @@ endif()
 ament_python_install_package(${PROJECT_NAME})
 
 install(DIRECTORY config
-  DESTINATION share/${PROJECT_NAME})
+  DESTINATION share/${PROJECT_NAME}/)
 
-install(DIRECTORY launch
-  DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 install(PROGRAMS nodes/demo.py
   DESTINATION lib/${PROJECT_NAME})

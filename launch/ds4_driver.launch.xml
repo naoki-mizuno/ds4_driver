@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="addr" default="" />
+  <arg name="use_standard_msgs" default="false" />
+  <arg name="autorepeat_rate" default="0" />
+
+  <node pkg="ds4_driver" exec="ds4_driver_node.py" name="ds4_driver" output="screen" >
+    <param from="$(find-pkg-share ds4_driver)/config/params.yaml" />
+
+    <param name="device_addr" value="$(var addr)" />
+    <param name="use_standard_msgs" value="$(var use_standard_msgs)" />
+    <param name="autorepeat_rate" value="$(var autorepeat_rate)" />
+  </node>
+
+  <node pkg="tf2_ros" exec="static_transform_publisher" name="ds4_to_imu"
+    args="0 0.05 -0.01 -1.5707 0 1.5707 ds4 ds4_imu" />
+</launch>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="addr" default="" />
+
+  <arg name="dof" default="6" />
+  <arg name="stamped" default="false" />
+
+  <include file="$(find-pkg-share ds4_driver)/launch/ds4_driver.launch.xml" >
+    <arg name="addr" value="$(var addr)" />
+    <arg name="use_standard_msgs" value="false" />
+  </include>
+
+  <node pkg="ds4_driver" exec="ds4_twist_node.py" name="ds4_twist" output="screen" >
+    <param from="$(find-pkg-share ds4_driver)/config/twist_$(var dof)dof.yaml" />
+
+    <param name="stamped" value="$(var stamped)" />
+  </node>
+</launch>

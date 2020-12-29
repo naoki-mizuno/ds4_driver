@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="addr" default="" />
+
+  <node pkg="ds4_driver" exec="demo.py" name="demo" />
+
+  <include file="$(find-pkg-share ds4_driver)/launch/ds4_driver.launch.xml" >
+    <arg name="addr" value="$(var addr)" />
+    <arg name="use_standard_msgs" value="false" />
+  </include>
+</launch>
