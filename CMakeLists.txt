@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(ds4_driver)
+cmake_minimum_required(VERSION 3.1.3)
+project(ds4_driver VERSION 0.2.1)
 
 find_package(catkin REQUIRED COMPONENTS
   message_generation
