@@ -169,7 +169,7 @@ class ControllerRos(Controller):
 
         self.cb_feedback(feedback)
 
-    def cb_joy_pub_timer(self, _):
+    def cb_joy_pub_timer(self):
         if self._prev_joy is not None:
             self.pub_joy.publish(self._prev_joy)
 
