@@ -1,6 +1,5 @@
 from ds4_driver.controller import Controller
 
-import rclpy
 from sensor_msgs.msg import BatteryState
 from sensor_msgs.msg import Joy
 from sensor_msgs.msg import JoyFeedback
