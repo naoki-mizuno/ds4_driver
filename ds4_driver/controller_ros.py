@@ -46,8 +46,7 @@ class ControllerRos(Controller):
 
             if self._autorepeat_rate != 0:
                 period = 1.0 / self._autorepeat_rate
-                # rclpy.Timer(rclpy.Duration.from_sec(period), self.cb_joy_pub_timer)
-                self.node.create_timer(timer_period_sec=period, callback=self.cb_joy_pub_timer)
+                self.node.create_timer(period, self.cb_joy_pub_timer)
         else:
             self.pub_status = self.node.create_publisher(Status, 'status', 1)
             self.sub_feedback = self.node.create_subscription(Feedback,'set_feedback', self.cb_feedback, 0)
@@ -122,12 +121,9 @@ class ControllerRos(Controller):
 
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
-            # rclpy.Timer(rclpy.Duration(msg.rumble_duration),
-            #             self.cb_stop_rumble,
-            #             oneshot=True)
-            self.stop_rumble_timer = self.node.create_timer(timer_period_sec=msg.rumble_duration, callback=self.cb_stop_rumble)
+            self.stop_rumble_timer = self.node.create_timer(msg.rumble_duration, self.cb_stop_rumble)
 
-    def cb_stop_rumble(self, event):
+    def cb_stop_rumble(self):
         try:
             self.control(rumble_small=0, rumble_big=0)
 
