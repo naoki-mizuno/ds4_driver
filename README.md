@@ -62,25 +62,26 @@ The `Dockerfile` contained in the root of this respository has an example ROS2 F
 
 ```
 docker build -t ds4_driver/foxy .
+```
 
-docker run -it  \
-  --device /dev/input \
-  --device /dev/snd \
-  --device /dev/hidraw0 \
-  --device /dev/hidraw1 \
-  --device /dev/hidraw2 \
-  --device /dev/hidraw3 \
-  --device /dev/hidraw4 \
-  --device /dev/hidraw5 \
-  --network=host \
-  ds4_driver/foxy
+After building the image you can automatically run the container by firstly adding the following line to your `~/.bashrc`
+file:
+
+```
+export DS4_DRIVER_LOCAL_PATH=<the path to your cloned version of ds4_driver>
+```
+
+and then from a new terminal from the `ds4_driver` project root do:
+
+```
+source ~/.bashrc
+bash run_bringup.bash
 
 # Now go into the container (`docker exec -it $CONTAINER_NAME bash`),
 # where $CONTAINER_NAME can be the name of the running container
 source install/setup.bash
 
-ros2 run ds4_driver 
-
+ros2 run ds4_driver ds4_driver_node.py
 ```
 
 ## Demonstration
