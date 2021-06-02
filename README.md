@@ -58,29 +58,29 @@ SUBSYSTEM=="input", ATTRS{name}=="*Wireless Controller Touchpad", RUN+="/bin/rm 
 
 ### Docker
 
-The `Dockerfile` contained in the root of this respository has an example ROS2 Foxy container setup you might use. 
+The `Dockerfile` contained in the root of this repository has an example ROS2 Foxy container setup you might use. 
 
 ```
 docker build -t ds4_driver/foxy .
+```
 
-docker run -it  \
-  --device /dev/input \
-  --device /dev/snd \
-  --device /dev/hidraw0 \
-  --device /dev/hidraw1 \
-  --device /dev/hidraw2 \
-  --device /dev/hidraw3 \
-  --device /dev/hidraw4 \
-  --device /dev/hidraw5 \
-  --network=host \
-  ds4_driver/foxy
+After building the image you can automatically run the container by starting a new terminal from the `ds4_driver` project 
+root and running the `run_bringup.bash` script which takes the path to the local `ds4_driver` project root as an optional
+first argument, like this:
 
+```
+bash run_bringup.bash <path_to_local_ds4_driver_project_root>
+```
+
+After running the above script the console will go into the running container and you can run from there or from a new 
+terminal executed into the container:
+
+```
 # Now go into the container (`docker exec -it $CONTAINER_NAME bash`),
 # where $CONTAINER_NAME can be the name of the running container
 source install/setup.bash
 
-ros2 run ds4_driver 
-
+ros2 run ds4_driver ds4_driver_node.py
 ```
 
 ## Demonstration

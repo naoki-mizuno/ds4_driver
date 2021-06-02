@@ -1,6 +1,5 @@
 from ds4_driver.controller import Controller
 
-import rclpy
 from sensor_msgs.msg import BatteryState
 from sensor_msgs.msg import Joy
 from sensor_msgs.msg import JoyFeedback
@@ -34,6 +33,8 @@ class ControllerRos(Controller):
         self._autorepeat_rate = self.node.get_parameter('autorepeat_rate').value
         self._prev_joy = None
 
+        self.stop_rumble_timer = None
+
         # Use ROS-standard messages (like sensor_msgs/Joy)
         if self.use_standard_msgs:
             self.pub_report = self.node.create_publisher(Report, 'raw_report', 0)
@@ -44,7 +45,7 @@ class ControllerRos(Controller):
 
             if self._autorepeat_rate != 0:
                 period = 1.0 / self._autorepeat_rate
-                rclpy.Timer(rclpy.Duration.from_sec(period), self.cb_joy_pub_timer)
+                self.node.create_timer(period, self.cb_joy_pub_timer)
         else:
             self.pub_status = self.node.create_publisher(Status, 'status', 1)
             self.sub_feedback = self.node.create_subscription(Feedback,'set_feedback', self.cb_feedback, 0)
@@ -119,13 +120,14 @@ class ControllerRos(Controller):
 
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
-            rclpy.Timer(rclpy.Duration(msg.rumble_duration),
-                        self.cb_stop_rumble,
-                        oneshot=True)
+            self.stop_rumble_timer = self.node.create_timer(msg.rumble_duration, self.cb_stop_rumble)
 
-    def cb_stop_rumble(self, event):
+    def cb_stop_rumble(self):
         try:
             self.control(rumble_small=0, rumble_big=0)
+
+            if self.stop_rumble_timer is not None:
+                self.stop_rumble_timer.destroy()
         except AttributeError:
             # The program exited and self.device was set to None
             pass
@@ -162,7 +164,7 @@ class ControllerRos(Controller):
 
         self.cb_feedback(feedback)
 
-    def cb_joy_pub_timer(self, _):
+    def cb_joy_pub_timer(self):
         if self._prev_joy is not None:
             self.pub_joy.publish(self._prev_joy)
 
