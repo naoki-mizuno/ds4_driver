@@ -174,7 +174,7 @@ class ControllerRos(Controller):
                 elif jf.id == 1:
                     feedback.rumble_big = jf.intensity
 
-        feedback.rumble_duration = 0.5
+        feedback.rumble_duration = 1.0
 
         self.cb_feedback(feedback)
 
