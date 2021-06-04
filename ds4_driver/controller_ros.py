@@ -11,6 +11,7 @@ from ds4_driver.msg import Status
 
 import copy
 import math
+import time
 
 
 class ControllerRos(Controller):
@@ -25,12 +26,12 @@ class ControllerRos(Controller):
         self.node.declare_parameter('imu_frame_id', 'ds4_imu')
         self.node.declare_parameter('autorepeat_rate', 0)
 
-        self.use_standard_msgs = True  # self.node.get_parameter('use_standard_msgs').value
+        self.use_standard_msgs = self.node.get_parameter('use_standard_msgs').value
         self.deadzone = self.node.get_parameter('deadzone').value
         self.frame_id = self.node.get_parameter('frame_id').value
         self.imu_frame_id = self.node.get_parameter('imu_frame_id').value
         # Only publish Joy messages on change
-        self._autorepeat_rate = 30  # self.node.get_parameter('autorepeat_rate').value
+        self._autorepeat_rate = self.node.get_parameter('autorepeat_rate').value
         self._prev_joy = None
 
         self.stop_rumble_timer = None
@@ -119,15 +120,26 @@ class ControllerRos(Controller):
         )
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
-            self.node.get_logger().info("in timer")
-            self.stop_rumble_timer = self.node.create_timer(msg.rumble_duration, self.cb_stop_rumble)
+            self.node.get_logger().info(f'Rumbling for {msg.rumble_duration} seconds')
+            rumble_start_time = time.time()
+            rumble_end_time = time.time()
+            while rumble_end_time - rumble_start_time < 1.0:
+                rumble_end_time = time.time()
+                continue
+            self.cb_stop_rumble()
+            # self.node.get_logger().info(f'in timer with duration {msg.rumble_duration}')
+            # if self.stop_rumble_timer is None:
+            #     self.stop_rumble_timer = self.node.create_timer(msg.rumble_duration, self.cb_stop_rumble)
+            # else:
+            #     self.node.get_logger().info(f'timer has already been destroyed')
 
     def cb_stop_rumble(self):
         try:
             self.control(rumble_small=0, rumble_big=0)
 
-            if self.stop_rumble_timer is not None:
-                self.stop_rumble_timer.destroy()
+            # if self.stop_rumble_timer is not None:
+            #     self.stop_rumble_timer.destroy()
+            #     self.stop_rumble_timer = None
         except AttributeError:
             # The program exited and self.device was set to None
             pass
