@@ -26,12 +26,12 @@ class ControllerRos(Controller):
         self.node.declare_parameter('imu_frame_id', 'ds4_imu')
         self.node.declare_parameter('autorepeat_rate', 0)
 
-        self.use_standard_msgs = self.node.get_parameter('use_standard_msgs').value
+        self.use_standard_msgs = True # self.node.get_parameter('use_standard_msgs').value
         self.deadzone = self.node.get_parameter('deadzone').value
         self.frame_id = self.node.get_parameter('frame_id').value
         self.imu_frame_id = self.node.get_parameter('imu_frame_id').value
         # Only publish Joy messages on change
-        self._autorepeat_rate = self.node.get_parameter('autorepeat_rate').value
+        self._autorepeat_rate = 30 # self.node.get_parameter('autorepeat_rate').value
         self._prev_joy = None
 
         self.stop_rumble_timer = None
