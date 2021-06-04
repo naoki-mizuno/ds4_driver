@@ -25,12 +25,12 @@ class ControllerRos(Controller):
         self.node.declare_parameter('imu_frame_id', 'ds4_imu')
         self.node.declare_parameter('autorepeat_rate', 0)
 
-        self.use_standard_msgs = self.node.get_parameter('use_standard_msgs').value
+        self.use_standard_msgs = True  # self.node.get_parameter('use_standard_msgs').value
         self.deadzone = self.node.get_parameter('deadzone').value
         self.frame_id = self.node.get_parameter('frame_id').value
         self.imu_frame_id = self.node.get_parameter('imu_frame_id').value
         # Only publish Joy messages on change
-        self._autorepeat_rate = self.node.get_parameter('autorepeat_rate').value
+        self._autorepeat_rate = 30  # self.node.get_parameter('autorepeat_rate').value
         self._prev_joy = None
 
         self.stop_rumble_timer = None
@@ -48,7 +48,7 @@ class ControllerRos(Controller):
                 self.node.create_timer(period, self.cb_joy_pub_timer)
         else:
             self.pub_status = self.node.create_publisher(Status, 'status', 1)
-            self.sub_feedback = self.node.create_subscription(Feedback,'set_feedback', self.cb_feedback, 0)
+            self.sub_feedback = self.node.create_subscription(Feedback, 'set_feedback', self.cb_feedback, 0)
 
     def cb_report(self, report):
         """
@@ -117,9 +117,9 @@ class ControllerRos(Controller):
             flash_on=to_int(msg.led_flash_on / 2.5) if msg.set_led_flash else None,
             flash_off=to_int(msg.led_flash_off / 2.5) if msg.set_led_flash else None,
         )
-
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
+            self.node.get_logger().info("in timer")
             self.stop_rumble_timer = self.node.create_timer(msg.rumble_duration, self.cb_stop_rumble)
 
     def cb_stop_rumble(self):
@@ -161,6 +161,8 @@ class ControllerRos(Controller):
                     feedback.rumble_small = jf.intensity
                 elif jf.id == 1:
                     feedback.rumble_big = jf.intensity
+
+        feedback.rumble_duration = 0.5
 
         self.cb_feedback(feedback)
 
