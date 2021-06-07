@@ -121,16 +121,12 @@ class ControllerRos(Controller):
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
             self.node.get_logger().info(f'Rumbling for {msg.rumble_duration} seconds')
-            rumble_start_time = time.time()
-            rumble_end_time = time.time()
-            while rumble_end_time - rumble_start_time < float(msg.rumble_duration):
-                rumble_end_time = time.time()
-                continue
-            self.cb_stop_rumble()
+            self.stop_rumble_timer = self.node.create_timer(msg.rumble_duration, self.cb_stop_rumble)
 
     def cb_stop_rumble(self):
         try:
             self.control(rumble_small=0, rumble_big=0)
+            self.node.destroy_timer(self.stop_rumble_timer)
         except AttributeError:
             # The program exited and self.device was set to None
             pass
