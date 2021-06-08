@@ -30,15 +30,6 @@ def main():
     device_addr = node.get_parameter('device_addr').value
     backend_type = node.get_parameter('backend').value
 
-    controller = ControllerRos(node)
-
-    sigint_handler = SignalHandler(controller)
-    # Since backend.devices is a non-ROS iterator that doesn't consider
-    # rclpy.is_shutdown(), the program freezes upon receiving SIGINT when
-    # using rclpy.on_shutdown. Thus, we need to define our shutdown sequence
-    # using signal.signal as is done in the original ds4drv script.
-    signal.signal(signal.SIGINT, sigint_handler)
-
     if backend_type == 'bluetooth':
         backend = BluetoothBackend(Logger('backend'))
     else:
@@ -51,16 +42,21 @@ def main():
         rclpy.signal_shutdown(str(err))
         sys.exit(1)
 
-    for device in backend.devices:
-        node.get_logger().info('Connected to {0}'.format(device.name))
-        if device_addr in (None, '', device.device_addr):
-            controller.setup_device(device)
-            if not controller.is_alive():
-                controller.start()
-            controller.loop.register_event('device-report', controller.cb_report)
-            rclpy.spin(node)
-        else:
-            node.get_logger().error("...but it's not the one we're looking for :(")
+    controller = ControllerRos(node, backend, device_addr)
+
+    sigint_handler = SignalHandler(controller)
+    # Since backend.devices is a non-ROS iterator that doesn't consider
+    # rclpy.is_shutdown(), the program freezes upon receiving SIGINT when
+    # using rclpy.on_shutdown. Thus, we need to define our shutdown sequence
+    # using signal.signal as is done in the original ds4drv script.
+    signal.signal(signal.SIGINT, sigint_handler)
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().error('ds4_driver_node has been killed with a keyboard interrupt')
+    # finally:
+        # node.shutdown_hook()
     rclpy.shutdown()
 
 

@@ -14,10 +14,12 @@ import math
 
 
 class ControllerRos(Controller):
-    def __init__(self, node):
+    def __init__(self, node, backend, device_addr):
         super(ControllerRos, self).__init__()
 
         self.node = node
+        self.backend = backend
+        self.device_addr = device_addr
 
         self.node.declare_parameter('use_standard_msgs', False)
         self.node.declare_parameter('deadzone', 0.1)
@@ -49,6 +51,23 @@ class ControllerRos(Controller):
         else:
             self.pub_status = self.node.create_publisher(Status, 'status', 1)
             self.sub_feedback = self.node.create_subscription(Feedback, 'set_feedback', self.cb_feedback, 0)
+
+        self.check_controller_timer = self.node.create_timer(0.5, self.check_controller_timer_cb)
+
+    def check_controller_timer_cb(self):
+        if self.device is None:
+            self.node.get_logger().info("Device is not connected! Trying to re-connect..")
+            for device in self.backend.devices:
+                self.node.get_logger().info('Connected to {0}'.format(device.name))
+                if self.device_addr in (None, '', device.device_addr):
+                    self.setup_device(device)
+                    if not self.is_alive():
+                        self.start()
+                    self.loop.register_event('device-report', self.cb_report)
+                else:
+                    self.node.get_logger().error("...but it's not the one we're looking for :(")
+        else:
+            self.node.get_logger().info("Device is connected")
 
     def cb_report(self, report):
         """
