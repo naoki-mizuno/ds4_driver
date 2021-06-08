@@ -52,7 +52,7 @@ class ControllerRos(Controller):
             self.pub_status = self.node.create_publisher(Status, 'status', 1)
             self.sub_feedback = self.node.create_subscription(Feedback, 'set_feedback', self.cb_feedback, 0)
 
-        self.check_controller_timer = self.node.create_timer(5.0, self.check_controller_timer_cb)
+        self.check_controller_timer = self.node.create_timer(1.0, self.check_controller_timer_cb)
 
     def check_controller_timer_cb(self):
         if self.device is None:
