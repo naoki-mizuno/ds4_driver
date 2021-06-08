@@ -50,6 +50,7 @@ def main():
         node.get_logger().error(err)
         rclpy.signal_shutdown(str(err))
         sys.exit(1)
+
     for device in backend.devices:
         node.get_logger().info('Connected to {0}'.format(device.name))
         if device_addr in (None, '', device.device_addr):
@@ -60,7 +61,8 @@ def main():
             rclpy.spin(node)
         else:
             node.get_logger().error("...but it's not the one we're looking for :(")
-    rclpy.shutdown_now()
+    rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
