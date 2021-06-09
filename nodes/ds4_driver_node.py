@@ -23,7 +23,7 @@ class SignalHandler(object):
 
 
 def main():
-    rclpy.init()
+    context = rclpy.init()
     node = rclpy.create_node('ds4_driver_node')
     node.declare_parameter('device_addr', None)
     node.declare_parameter('backend', 'hidraw')
@@ -55,8 +55,8 @@ def main():
         rclpy.spin(node)
     except KeyboardInterrupt:
         node.get_logger().error('ds4_driver_node has been killed with a keyboard interrupt')
-    # finally:
-        # node.shutdown_hook()
+    finally:
+        controller.connect_device_thread.join()
     rclpy.shutdown()
 
 

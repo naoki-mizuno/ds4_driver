@@ -9,6 +9,8 @@ from ds4_driver.msg import Feedback
 from ds4_driver.msg import Report
 from ds4_driver.msg import Status
 
+import threading
+
 import copy
 import math
 
@@ -52,22 +54,19 @@ class ControllerRos(Controller):
             self.pub_status = self.node.create_publisher(Status, 'status', 1)
             self.sub_feedback = self.node.create_subscription(Feedback, 'set_feedback', self.cb_feedback, 0)
 
-        self.check_controller_timer = self.node.create_timer(1.0, self.check_controller_timer_cb)
+        self.connect_device_thread = threading.Thread(target=self.look_for_device, daemon=True)
+        self.connect_device_thread.start()
 
-    def check_controller_timer_cb(self):
-        if self.device is None:
-            self.node.get_logger().info("Device is not connected! Trying to re-connect..")
-            for device in self.backend.devices:
-                self.node.get_logger().info('Connected to {0}'.format(device.name))
-                if self.device_addr in (None, '', device.device_addr):
-                    self.setup_device(device)
-                    if not self.is_alive():
-                        self.start()
-                    self.loop.register_event('device-report', self.cb_report)
-                else:
-                    self.node.get_logger().error("...but it's not the one we're looking for :(")
-        else:
-            self.node.get_logger().info("Device is connected")
+    def look_for_device(self):
+        for device in self.backend.devices:
+            self.node.get_logger().info('Connected to {0}'.format(device.name))
+            if self.device_addr in (None, '', device.device_addr):
+                self.setup_device(device)
+                if not self.is_alive():
+                    self.start()
+                self.loop.register_event('device-report', self.cb_report)
+            else:
+                self.node.get_logger().error("...but it's not the one we're looking for :(")
 
     def cb_report(self, report):
         """
