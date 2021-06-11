@@ -23,7 +23,7 @@ class SignalHandler(object):
 
 
 def main():
-    context = rclpy.init()
+    rclpy.init()
     node = rclpy.create_node('ds4_driver_node')
     node.declare_parameter('device_addr', None)
     node.declare_parameter('backend', 'hidraw')
