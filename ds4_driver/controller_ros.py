@@ -125,7 +125,9 @@ class ControllerRos(Controller):
     def cb_stop_rumble(self):
         try:
             self.control(rumble_small=0, rumble_big=0)
-            self.node.destroy_timer(self.stop_rumble_timer)
+            if self.stop_rumble_timer is not None:
+                self.node.destroy_timer(self.stop_rumble_timer)
+                self.stop_rumble_timer = None
         except AttributeError:
             # The program exited and self.device was set to None
             pass
