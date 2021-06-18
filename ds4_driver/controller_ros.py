@@ -48,7 +48,7 @@ class ControllerRos(Controller):
                 self.node.create_timer(period, self.cb_joy_pub_timer)
         else:
             self.pub_status = self.node.create_publisher(Status, 'status', 1)
-            self.sub_feedback = self.node.create_subscription(Feedback,'set_feedback', self.cb_feedback, 0)
+            self.sub_feedback = self.node.create_subscription(Feedback, 'set_feedback', self.cb_feedback, 0)
 
     def cb_report(self, report):
         """
@@ -117,17 +117,17 @@ class ControllerRos(Controller):
             flash_on=to_int(msg.led_flash_on / 2.5) if msg.set_led_flash else None,
             flash_off=to_int(msg.led_flash_off / 2.5) if msg.set_led_flash else None,
         )
-
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
+            self.node.get_logger().info(f'Rumbling for {msg.rumble_duration} seconds')
             self.stop_rumble_timer = self.node.create_timer(msg.rumble_duration, self.cb_stop_rumble)
 
     def cb_stop_rumble(self):
         try:
             self.control(rumble_small=0, rumble_big=0)
-
             if self.stop_rumble_timer is not None:
-                self.stop_rumble_timer.destroy()
+                self.node.destroy_timer(self.stop_rumble_timer)
+                self.stop_rumble_timer = None
         except AttributeError:
             # The program exited and self.device was set to None
             pass
@@ -161,6 +161,8 @@ class ControllerRos(Controller):
                     feedback.rumble_small = jf.intensity
                 elif jf.id == 1:
                     feedback.rumble_big = jf.intensity
+
+        feedback.rumble_duration = 1.0
 
         self.cb_feedback(feedback)
 

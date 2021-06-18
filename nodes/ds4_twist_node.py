@@ -41,9 +41,10 @@ class StatusToTwist(object):
         for attr in Status.__slots__:
             # add an underscore since ROS2 slots have an prepended underscore
             if attr.startswith('_axis_') or attr.startswith('_button_'):
-                self._attrs.append(attr[1:]) #get rid of the prepended underscore
+                self._attrs.append(attr[1:])  # get rid of the prepended underscore
         self._pub = self._node.create_publisher(self._cls, 'cmd_vel', 0)
         self._sub = self._node.create_subscription(Status, 'status', self.cb_status, 0)
+
     def cb_status(self, msg):
         """
         :param msg:
