@@ -15,7 +15,6 @@ class Logger(object):
 
     def warning(self, msg, *args, **kwargs):
         msg = self._format_msg_(msg, *args, **kwargs)
-        self.node.get_logger().warning(msg)
         rclpy.logging.get_logger("ds4drv").warning(msg)
 
     def info(self, msg, *args, **kwargs):

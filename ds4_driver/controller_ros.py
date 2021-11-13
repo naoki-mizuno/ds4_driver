@@ -18,6 +18,7 @@ class ControllerRos(Controller):
         super(ControllerRos, self).__init__()
 
         self.node = node
+        self._logger = self.node.get_logger()
 
         self.node.declare_parameter("use_standard_msgs", False)
         self.node.declare_parameter("deadzone", 0.1)
@@ -107,7 +108,7 @@ class ControllerRos(Controller):
         :return:
         """
         if self.device is None:
-            self.node.get_logger().warn("No Device")
+            self._logger.warning("No Device")
             return
 
         def to_int(v):
@@ -127,7 +128,7 @@ class ControllerRos(Controller):
         )
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
-            self.node.get_logger().info(f"Rumbling for {msg.rumble_duration} seconds")
+            self._logger.info(f"Rumbling for {msg.rumble_duration} seconds")
             self.stop_rumble_timer = self.node.create_timer(
                 msg.rumble_duration, self.cb_stop_rumble
             )
