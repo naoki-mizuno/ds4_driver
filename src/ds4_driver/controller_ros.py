@@ -18,28 +18,32 @@ class ControllerRos(Controller):
     def __init__(self):
         super(ControllerRos, self).__init__()
 
-        self.use_standard_msgs = rospy.get_param('~use_standard_msgs', False)
-        self.deadzone = rospy.get_param('~deadzone', 0.1)
-        self.frame_id = rospy.get_param('~frame_id', 'ds4')
-        self.imu_frame_id = rospy.get_param('~imu_frame_id', 'ds4_imu')
+        self.use_standard_msgs = rospy.get_param("~use_standard_msgs", False)
+        self.deadzone = rospy.get_param("~deadzone", 0.1)
+        self.frame_id = rospy.get_param("~frame_id", "ds4")
+        self.imu_frame_id = rospy.get_param("~imu_frame_id", "ds4_imu")
         # Only publish Joy messages on change
-        self._autorepeat_rate = rospy.get_param('~autorepeat_rate', 0)
+        self._autorepeat_rate = rospy.get_param("~autorepeat_rate", 0)
         self._prev_joy = None
 
         # Use ROS-standard messages (like sensor_msgs/Joy)
         if self.use_standard_msgs:
-            self.pub_report = rospy.Publisher('raw_report', Report, queue_size=1)
-            self.pub_battery = rospy.Publisher('battery', BatteryState, queue_size=1)
-            self.pub_joy = rospy.Publisher('joy', Joy, queue_size=1)
-            self.pub_imu = rospy.Publisher('imu', Imu, queue_size=1)
-            self.sub_feedback = rospy.Subscriber('set_feedback', JoyFeedbackArray, self.cb_joy_feedback, queue_size=1)
+            self.pub_report = rospy.Publisher("raw_report", Report, queue_size=1)
+            self.pub_battery = rospy.Publisher("battery", BatteryState, queue_size=1)
+            self.pub_joy = rospy.Publisher("joy", Joy, queue_size=1)
+            self.pub_imu = rospy.Publisher("imu", Imu, queue_size=1)
+            self.sub_feedback = rospy.Subscriber(
+                "set_feedback", JoyFeedbackArray, self.cb_joy_feedback, queue_size=1
+            )
 
             if self._autorepeat_rate != 0:
                 period = 1.0 / self._autorepeat_rate
                 rospy.Timer(rospy.Duration.from_sec(period), self.cb_joy_pub_timer)
         else:
-            self.pub_status = rospy.Publisher('status', Status, queue_size=1)
-            self.sub_feedback = rospy.Subscriber('set_feedback', Feedback, self.cb_feedback, queue_size=1)
+            self.pub_status = rospy.Publisher("status", Status, queue_size=1)
+            self.sub_feedback = rospy.Subscriber(
+                "set_feedback", Feedback, self.cb_feedback, queue_size=1
+            )
 
     def cb_report(self, report):
         """
@@ -51,19 +55,19 @@ class ControllerRos(Controller):
         report_msg.header.frame_id = self.frame_id
         report_msg.header.stamp = rospy.Time.now()
         for attr in dir(report):
-            if attr.startswith('_'):
+            if attr.startswith("_"):
                 continue
             if hasattr(report_msg, attr):
                 val = getattr(report, attr)
                 setattr(report_msg, attr, val)
         # Fix (potentially) incorrect data reported from device
         imu_data = Controller.get_imu_data(report)
-        report_msg.lin_acc_x = imu_data['lin_acc']['x']
-        report_msg.lin_acc_y = imu_data['lin_acc']['y']
-        report_msg.lin_acc_z = imu_data['lin_acc']['z']
-        report_msg.ang_vel_x = imu_data['ang_vel']['x']
-        report_msg.ang_vel_y = imu_data['ang_vel']['y']
-        report_msg.ang_vel_z = imu_data['ang_vel']['z']
+        report_msg.lin_acc_x = imu_data["lin_acc"]["x"]
+        report_msg.lin_acc_y = imu_data["lin_acc"]["y"]
+        report_msg.lin_acc_z = imu_data["lin_acc"]["z"]
+        report_msg.ang_vel_x = imu_data["ang_vel"]["x"]
+        report_msg.ang_vel_y = imu_data["ang_vel"]["y"]
+        report_msg.ang_vel_z = imu_data["ang_vel"]["z"]
 
         status_msg = self._report_to_status_(report_msg, self.deadzone)
         status_msg.imu.header.frame_id = self.imu_frame_id
@@ -74,9 +78,11 @@ class ControllerRos(Controller):
             imu_msg = self._status_to_imu_(status_msg)
             self.pub_report.publish(report_msg)
             self.pub_battery.publish(battery_msg)
-            if self._prev_joy is None \
-                    or joy_msg.axes != self._prev_joy.axes \
-                    or joy_msg.buttons != self._prev_joy.buttons:
+            if (
+                self._prev_joy is None
+                or joy_msg.axes != self._prev_joy.axes
+                or joy_msg.buttons != self._prev_joy.buttons
+            ):
                 self.pub_joy.publish(joy_msg)
             self.pub_imu.publish(imu_msg)
 
@@ -94,7 +100,9 @@ class ControllerRos(Controller):
         if self.device is None:
             return
 
-        def to_int(v): return int(v * 255)
+        def to_int(v):
+            return int(v * 255)
+
         self.control(
             # LED color
             led_red=to_int(msg.led_r) if msg.set_led else None,
@@ -110,9 +118,9 @@ class ControllerRos(Controller):
 
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
-            rospy.Timer(rospy.Duration(msg.rumble_duration),
-                        self.cb_stop_rumble,
-                        oneshot=True)
+            rospy.Timer(
+                rospy.Duration(msg.rumble_duration), self.cb_stop_rumble, oneshot=True
+            )
 
     def cb_stop_rumble(self, event):
         try:
@@ -163,10 +171,18 @@ class ControllerRos(Controller):
         status_msg.header = copy.deepcopy(report_msg.header)
 
         # Sticks (signs are flipped for consistency with other joypads)
-        status_msg.axis_left_x = -ControllerRos._normalize_axis_(report_msg.left_analog_x, deadzone)
-        status_msg.axis_left_y = -ControllerRos._normalize_axis_(report_msg.left_analog_y, deadzone)
-        status_msg.axis_right_x = -ControllerRos._normalize_axis_(report_msg.right_analog_x, deadzone)
-        status_msg.axis_right_y = -ControllerRos._normalize_axis_(report_msg.right_analog_y, deadzone)
+        status_msg.axis_left_x = -ControllerRos._normalize_axis_(
+            report_msg.left_analog_x, deadzone
+        )
+        status_msg.axis_left_y = -ControllerRos._normalize_axis_(
+            report_msg.left_analog_y, deadzone
+        )
+        status_msg.axis_right_x = -ControllerRos._normalize_axis_(
+            report_msg.right_analog_x, deadzone
+        )
+        status_msg.axis_right_y = -ControllerRos._normalize_axis_(
+            report_msg.right_analog_y, deadzone
+        )
 
         # Shoulder buttons
         status_msg.axis_l2 = report_msg.l2_analog / 255.0
@@ -177,7 +193,7 @@ class ControllerRos(Controller):
         status_msg.button_dpad_down = report_msg.dpad_down
         status_msg.button_dpad_left = report_msg.dpad_left
         status_msg.button_dpad_right = report_msg.dpad_right
-        plug_attrs = [attr for attr in dir(report_msg) if attr.startswith('button_')]
+        plug_attrs = [attr for attr in dir(report_msg) if attr.startswith("button_")]
         for attr in plug_attrs:
             val = getattr(report_msg, attr)
             setattr(status_msg, attr, val)
@@ -185,9 +201,13 @@ class ControllerRos(Controller):
         # IMU (X: right, Y: up, Z: towards user)
         status_msg.imu.header = copy.deepcopy(status_msg.header)
         # To m/s^2: 0.98 mg/LSB (BMI055 data sheet Chapter 5.2.1)
-        def to_mpss(v): return float(v) / (2**13 - 1) * 9.80665 * 0.98
+        def to_mpss(v):
+            return float(v) / (2 ** 13 - 1) * 9.80665 * 0.98
+
         # To rad/s: 32767: 2000 deg/s (BMI055 data sheet Chapter 7.2.1)
-        def to_radps(v): return float(v) / (2**15 - 1) * math.pi / 180 * 2000
+        def to_radps(v):
+            return float(v) / (2 ** 15 - 1) * math.pi / 180 * 2000
+
         # Convert
         status_msg.imu.linear_acceleration.x = to_mpss(report_msg.lin_acc_x)
         status_msg.imu.linear_acceleration.y = to_mpss(report_msg.lin_acc_y)
@@ -201,12 +221,20 @@ class ControllerRos(Controller):
         # Trackpads
         status_msg.touch0.id = report_msg.trackpad_touch0_id
         status_msg.touch0.active = report_msg.trackpad_touch0_active
-        status_msg.touch0.x = report_msg.trackpad_touch0_x / float(Controller.TOUCHPAD_MAX_X)
-        status_msg.touch0.y = report_msg.trackpad_touch0_y / float(Controller.TOUCHPAD_MAX_Y)
+        status_msg.touch0.x = report_msg.trackpad_touch0_x / float(
+            Controller.TOUCHPAD_MAX_X
+        )
+        status_msg.touch0.y = report_msg.trackpad_touch0_y / float(
+            Controller.TOUCHPAD_MAX_Y
+        )
         status_msg.touch1.id = report_msg.trackpad_touch1_id
         status_msg.touch1.active = report_msg.trackpad_touch1_active
-        status_msg.touch1.x = report_msg.trackpad_touch1_x / float(Controller.TOUCHPAD_MAX_X)
-        status_msg.touch1.y = report_msg.trackpad_touch1_y / float(Controller.TOUCHPAD_MAX_Y)
+        status_msg.touch1.x = report_msg.trackpad_touch1_x / float(
+            Controller.TOUCHPAD_MAX_X
+        )
+        status_msg.touch1.y = report_msg.trackpad_touch1_y / float(
+            Controller.TOUCHPAD_MAX_Y
+        )
 
         # Battery
         if report_msg.battery == Controller.BATTERY_FULL_CHARGING:
@@ -214,10 +242,12 @@ class ControllerRos(Controller):
             status_msg.battery_percentage = 1.0
         else:
             status_msg.battery_full_charging = False
-            status_msg.battery_percentage = float(report_msg.battery) / Controller.BATTERY_MAX
+            status_msg.battery_percentage = (
+                float(report_msg.battery) / Controller.BATTERY_MAX
+            )
 
         # Plugs
-        plug_attrs = [attr for attr in dir(report_msg) if attr.startswith('plug_')]
+        plug_attrs = [attr for attr in dir(report_msg) if attr.startswith("plug_")]
         for attr in plug_attrs:
             val = getattr(report_msg, attr)
             setattr(status_msg, attr, val)
@@ -291,9 +321,9 @@ class ControllerRos(Controller):
         msg.header = status.header
         msg.percentage = status.battery_percentage
         msg.voltage = Controller.MAX_VOLTAGE * msg.percentage
-        msg.current = float('NaN')
-        msg.charge = float('NaN')
-        msg.capacity = float('NaN')
+        msg.current = float("NaN")
+        msg.charge = float("NaN")
+        msg.capacity = float("NaN")
         msg.design_capacity = 1.0
         if not status.plug_usb:
             msg.power_supply_status = BatteryState.POWER_SUPPLY_STATUS_NOT_CHARGING
@@ -313,4 +343,3 @@ class ControllerRos(Controller):
         :return:
         """
         return status.imu
-
