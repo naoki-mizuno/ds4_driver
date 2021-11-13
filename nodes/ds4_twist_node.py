@@ -4,44 +4,46 @@ import rclpy
 from geometry_msgs.msg import Twist, TwistStamped
 from ds4_driver.msg import Status
 
+from collections import defaultdict
+import itertools
+
 
 class StatusToTwist(object):
     def __init__(self, node):
         self._node = node
         self._node.declare_parameter("stamped", False)
         self._node.declare_parameter("frame_id", "base_link")
-        self._stamped = self._node.get_parameter("stamped")
+
+        self._stamped = self._node.get_parameter("stamped").value
+        self._frame_id = self._node.get_parameter("frame_id").value
         if self._stamped:
             self._cls = TwistStamped
-            self._frame_id = self._node.get_parameter("frame_id").value
         else:
             self._cls = Twist
 
-        self.param_dict = dict()
+        # Automatically create missing keys in a dict
+        def make_defaultdict():
+            return defaultdict(make_defaultdict)
+
+        param_dict = make_defaultdict()
         param_types = ["inputs", "scales"]
         param_categories = ["angular", "linear"]
         param_axis = ["x", "y", "z"]
+        for t, c, a in itertools.product(param_types, param_categories, param_axis):
+            param_name = "{}.{}.{}".format(t, c, a)
+            self._node.declare_parameter(param_name)
 
-        # We want to be able to declare each parameter type.
-        # In the past this was not necc. but for rclpy you must
-        # declare the parameter before you use it.
-        for t in param_types:
-            self.param_dict[t] = dict()
-            for c in param_categories:
-                self.param_dict[t][c] = dict()
-                for a in param_axis:
-                    self.param_dict[t][c][a] = dict()
-                    self._node.declare_parameter("{}.{}.{}".format(t, c, a))
-                    self.param_dict[t][c][a] = self._node.get_parameter(
-                        "{}.{}.{}".format(t, c, a)
-                    ).value
+            param_value = self._node.get_parameter(param_name).value
+            if param_value is not None:
+                param_dict[t][c][a] = param_value
 
-        self._inputs = self.param_dict["inputs"]
-        self._scales = self.param_dict["scales"]
+        # Convert back to dict (in case a non-existent key is accessed later)
+        self._inputs = {k: dict(v) for k, v in param_dict["inputs"].items()}
+        self._scales = {k: dict(v) for k, v in param_dict["scales"].items()}
 
         self._attrs = []
         for attr in Status.__slots__:
-            # add an underscore since ROS2 slots have an prepended underscore
+            # ROS2 message slots have a prepended underscore
             if attr.startswith("_axis_") or attr.startswith("_button_"):
                 self._attrs.append(attr[1:])  # get rid of the prepended underscore
         self._pub = self._node.create_publisher(self._cls, "cmd_vel", 0)
