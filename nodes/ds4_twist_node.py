@@ -7,22 +7,22 @@ from ds4_driver.msg import Status
 
 class StatusToTwist(object):
     def __init__(self):
-        self._stamped = rospy.get_param('~stamped', False)
+        self._stamped = rospy.get_param("~stamped", False)
         if self._stamped:
             self._cls = TwistStamped
-            self._frame_id = rospy.get_param('~frame_id', 'base_link')
+            self._frame_id = rospy.get_param("~frame_id", "base_link")
         else:
             self._cls = Twist
-        self._inputs = rospy.get_param('~inputs')
-        self._scales = rospy.get_param('~scales')
+        self._inputs = rospy.get_param("~inputs")
+        self._scales = rospy.get_param("~scales")
 
         self._attrs = []
         for attr in Status.__slots__:
-            if attr.startswith('axis_') or attr.startswith('button_'):
+            if attr.startswith("axis_") or attr.startswith("button_"):
                 self._attrs.append(attr)
 
-        self._pub = rospy.Publisher('cmd_vel', self._cls, queue_size=1)
-        rospy.Subscriber('status', Status, self.cb_status, queue_size=1)
+        self._pub = rospy.Publisher("cmd_vel", self._cls, queue_size=1)
+        rospy.Subscriber("status", Status, self.cb_status, queue_size=1)
 
     def cb_status(self, msg):
         """
@@ -53,12 +53,12 @@ class StatusToTwist(object):
 
 
 def main():
-    rospy.init_node('ds4_twist')
+    rospy.init_node("ds4_twist")
 
     StatusToTwist()
 
     rospy.spin()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

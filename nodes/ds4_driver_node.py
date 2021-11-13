@@ -17,16 +17,16 @@ class SignalHandler(object):
         self.controller = controller
 
     def __call__(self, signum, frame):
-        rospy.loginfo('Shutting down...')
+        rospy.loginfo("Shutting down...")
         self.controller.exit()
         sys.exit(0)
 
 
 def main():
-    rospy.init_node('ds4_driver_node')
+    rospy.init_node("ds4_driver_node")
 
-    device_addr = rospy.get_param('~device_addr', None)
-    backend_type = rospy.get_param('~backend', 'hidraw')
+    device_addr = rospy.get_param("~device_addr", None)
+    backend_type = rospy.get_param("~backend", "hidraw")
 
     controller = ControllerRos()
 
@@ -37,10 +37,10 @@ def main():
     # using signal.signal as is done in the original ds4drv script.
     signal.signal(signal.SIGINT, sigint_handler)
 
-    if backend_type == 'bluetooth':
-        backend = BluetoothBackend(Logger('backend'))
+    if backend_type == "bluetooth":
+        backend = BluetoothBackend(Logger("backend"))
     else:
-        backend = HidrawBackend(Logger('backend'))
+        backend = HidrawBackend(Logger("backend"))
 
     try:
         backend.setup()
@@ -50,15 +50,15 @@ def main():
         sys.exit(1)
 
     for device in backend.devices:
-        rospy.loginfo('Connected to {0}'.format(device.name))
-        if device_addr in (None, '', device.device_addr):
+        rospy.loginfo("Connected to {0}".format(device.name))
+        if device_addr in (None, "", device.device_addr):
             controller.setup_device(device)
             if not controller.is_alive():
                 controller.start()
-            controller.loop.register_event('device-report', controller.cb_report)
+            controller.loop.register_event("device-report", controller.cb_report)
         else:
             rospy.loginfo("...but it's not the one we're looking for :(")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

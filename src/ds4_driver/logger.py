@@ -27,4 +27,4 @@ class Logger(object):
 
     def _format_msg_(self, msg, *args, **kwargs):
         msg = msg.format(*args, **kwargs)
-        return '[{0}]: {1}'.format(self.module, msg)
+        return "[{0}]: {1}".format(self.module, msg)
