@@ -14,6 +14,8 @@ class StatusToTwist(object):
         self._node.declare_parameter("stamped", False)
         self._node.declare_parameter("frame_id", "base_link")
 
+        self._logger = self._node.get_logger()
+
         self._stamped = self._node.get_parameter("stamped").value
         self._frame_id = self._node.get_parameter("frame_id").value
         if self._stamped:
@@ -40,6 +42,10 @@ class StatusToTwist(object):
         # Convert back to dict (in case a non-existent key is accessed later)
         self._inputs = {k: dict(v) for k, v in param_dict["inputs"].items()}
         self._scales = {k: dict(v) for k, v in param_dict["scales"].items()}
+
+        if self._inputs == {}:
+            msg = "inputs parameter is not specified: not doing anything"
+            self._logger.warning(msg)
 
         self._attrs = []
         for attr in Status.__slots__:
