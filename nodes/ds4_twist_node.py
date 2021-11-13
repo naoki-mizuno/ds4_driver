@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rclpy
 from geometry_msgs.msg import Twist, TwistStamped

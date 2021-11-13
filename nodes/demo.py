@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rclpy
 from ds4_driver.msg import Feedback, Status
