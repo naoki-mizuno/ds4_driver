@@ -128,7 +128,7 @@ class ControllerRos(Controller):
                 flash_off=to_int(msg.led_flash_off / 2.5) if msg.set_led_flash else None,
             )
         except (AttributeError, OSError) as e:
-            self._logger.error(str(e))
+            self._logger.error(str(e) + " The controller might be disconnected or has died due to low battery!")
 
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
@@ -145,7 +145,7 @@ class ControllerRos(Controller):
                 self.stop_rumble_timer = None
         except (AttributeError, OSError) as e:
             # The program exited and self.device was set to None
-            self._logger.error(str(e))
+            self._logger.error(str(e) + " The controller might be disconnected or has died due to low battery!")
             pass
 
     def cb_joy_feedback(self, msg):
