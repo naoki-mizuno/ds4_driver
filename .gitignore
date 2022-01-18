@@ -17,3 +17,7 @@
 !config/
 !launch/
 !ds4_driver/
+
+!docker/
+!docker/*
+!run_docker.bash
