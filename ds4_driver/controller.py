@@ -101,14 +101,15 @@ class Controller(Thread):
         )
 
     def _control(self, **kwargs):
-        self.device.control(
-            led_red=self._led[0],
-            led_green=self._led[1],
-            led_blue=self._led[2],
-            flash_led1=self._led_flash[0],
-            flash_led2=self._led_flash[1],
-            **kwargs
-        )
+        if self.device is not None:
+            self.device.control(
+                led_red=self._led[0],
+                led_green=self._led[1],
+                led_blue=self._led[2],
+                flash_led1=self._led_flash[0],
+                flash_led2=self._led_flash[1],
+                **kwargs
+            )
 
     @staticmethod
     def get_imu_data(report):

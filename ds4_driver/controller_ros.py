@@ -113,6 +113,7 @@ class ControllerRos(Controller):
 
         def to_int(v):
             return int(v * 255)
+
         try:
             self.control(
                 # LED color
