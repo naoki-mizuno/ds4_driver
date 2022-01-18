@@ -113,19 +113,21 @@ class ControllerRos(Controller):
 
         def to_int(v):
             return int(v * 255)
-
-        self.control(
-            # LED color
-            led_red=to_int(msg.led_r) if msg.set_led else None,
-            led_green=to_int(msg.led_g) if msg.set_led else None,
-            led_blue=to_int(msg.led_b) if msg.set_led else None,
-            # Rumble
-            rumble_small=to_int(msg.rumble_small) if msg.set_rumble else None,
-            rumble_big=to_int(msg.rumble_big) if msg.set_rumble else None,
-            # Flash LED
-            flash_on=to_int(msg.led_flash_on / 2.5) if msg.set_led_flash else None,
-            flash_off=to_int(msg.led_flash_off / 2.5) if msg.set_led_flash else None,
-        )
+        try:
+            self.control(
+                # LED color
+                led_red=to_int(msg.led_r) if msg.set_led else None,
+                led_green=to_int(msg.led_g) if msg.set_led else None,
+                led_blue=to_int(msg.led_b) if msg.set_led else None,
+                # Rumble
+                rumble_small=to_int(msg.rumble_small) if msg.set_rumble else None,
+                rumble_big=to_int(msg.rumble_big) if msg.set_rumble else None,
+                # Flash LED
+                flash_on=to_int(msg.led_flash_on / 2.5) if msg.set_led_flash else None,
+                flash_off=to_int(msg.led_flash_off / 2.5) if msg.set_led_flash else None,
+            )
+        except (AttributeError, OSError) as e:
+            self._logger.error(str(e))
 
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
@@ -140,8 +142,9 @@ class ControllerRos(Controller):
             if self.stop_rumble_timer is not None:
                 self.node.destroy_timer(self.stop_rumble_timer)
                 self.stop_rumble_timer = None
-        except AttributeError:
+        except (AttributeError, OSError) as e:
             # The program exited and self.device was set to None
+            self._logger.error(str(e))
             pass
 
     def cb_joy_feedback(self, msg):
