@@ -127,7 +127,7 @@ class ControllerRos(Controller):
                 flash_on=to_int(msg.led_flash_on / 2.5) if msg.set_led_flash else None,
                 flash_off=to_int(msg.led_flash_off / 2.5) if msg.set_led_flash else None,
             )
-        except (AttributeError, OSError) as e:
+        except OSError as e:
             self._logger.error(str(e) + " The controller might be disconnected!")
 
         # Timer to stop rumble
@@ -140,12 +140,15 @@ class ControllerRos(Controller):
     def cb_stop_rumble(self):
         try:
             self.control(rumble_small=0, rumble_big=0)
+        except OSError as e:
+            self._logger.error(str(e) + " The controller might be disconnected!")
+
+        try:
             if self.stop_rumble_timer is not None:
                 self.node.destroy_timer(self.stop_rumble_timer)
                 self.stop_rumble_timer = None
-        except (AttributeError, OSError) as e:
+        except AttributeError:
             # The program exited and self.device was set to None
-            self._logger.error(str(e) + " The controller might be disconnected!")
             pass
 
     def cb_joy_feedback(self, msg):
