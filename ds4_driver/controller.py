@@ -81,7 +81,8 @@ class Controller(Thread):
         :param rumble_big:
         :param flash_on:
         :param flash_off:
-        :return:
+        :raises OSError: can be raised if we try to call this method when the controller unexpectedly disconnects
+        :return
         """
         self._led = (
             self._led[0] if led_red is None else led_red,
@@ -101,14 +102,15 @@ class Controller(Thread):
         )
 
     def _control(self, **kwargs):
-        self.device.control(
-            led_red=self._led[0],
-            led_green=self._led[1],
-            led_blue=self._led[2],
-            flash_led1=self._led_flash[0],
-            flash_led2=self._led_flash[1],
-            **kwargs
-        )
+        if self.device is not None:
+            self.device.control(
+                led_red=self._led[0],
+                led_green=self._led[1],
+                led_blue=self._led[2],
+                flash_led1=self._led_flash[0],
+                flash_led2=self._led_flash[1],
+                **kwargs
+            )
 
     @staticmethod
     def get_imu_data(report):

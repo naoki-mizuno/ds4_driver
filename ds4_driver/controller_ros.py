@@ -114,18 +114,22 @@ class ControllerRos(Controller):
         def to_int(v):
             return int(v * 255)
 
-        self.control(
-            # LED color
-            led_red=to_int(msg.led_r) if msg.set_led else None,
-            led_green=to_int(msg.led_g) if msg.set_led else None,
-            led_blue=to_int(msg.led_b) if msg.set_led else None,
-            # Rumble
-            rumble_small=to_int(msg.rumble_small) if msg.set_rumble else None,
-            rumble_big=to_int(msg.rumble_big) if msg.set_rumble else None,
-            # Flash LED
-            flash_on=to_int(msg.led_flash_on / 2.5) if msg.set_led_flash else None,
-            flash_off=to_int(msg.led_flash_off / 2.5) if msg.set_led_flash else None,
-        )
+        try:
+            self.control(
+                # LED color
+                led_red=to_int(msg.led_r) if msg.set_led else None,
+                led_green=to_int(msg.led_g) if msg.set_led else None,
+                led_blue=to_int(msg.led_b) if msg.set_led else None,
+                # Rumble
+                rumble_small=to_int(msg.rumble_small) if msg.set_rumble else None,
+                rumble_big=to_int(msg.rumble_big) if msg.set_rumble else None,
+                # Flash LED
+                flash_on=to_int(msg.led_flash_on / 2.5) if msg.set_led_flash else None,
+                flash_off=to_int(msg.led_flash_off / 2.5) if msg.set_led_flash else None,
+            )
+        except OSError as e:
+            self._logger.error(str(e) + " The controller might be disconnected!")
+
         # Timer to stop rumble
         if msg.set_rumble and msg.rumble_duration != 0:
             self._logger.info(f"Rumbling for {msg.rumble_duration} seconds")
@@ -136,6 +140,10 @@ class ControllerRos(Controller):
     def cb_stop_rumble(self):
         try:
             self.control(rumble_small=0, rumble_big=0)
+        except OSError as e:
+            self._logger.error(str(e) + " The controller might be disconnected!")
+
+        try:
             if self.stop_rumble_timer is not None:
                 self.node.destroy_timer(self.stop_rumble_timer)
                 self.stop_rumble_timer = None
@@ -216,6 +224,7 @@ class ControllerRos(Controller):
 
         # IMU (X: right, Y: up, Z: towards user)
         status_msg.imu.header = copy.deepcopy(status_msg.header)
+
         # To m/s^2: 0.98 mg/LSB (BMI055 data sheet Chapter 5.2.1)
         def to_mpss(v):
             return float(v) / (2 ** 13 - 1) * 9.80665 * 0.98
