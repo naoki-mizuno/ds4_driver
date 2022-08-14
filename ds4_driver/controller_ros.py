@@ -24,7 +24,7 @@ class ControllerRos(Controller):
         self.node.declare_parameter("deadzone", 0.1)
         self.node.declare_parameter("frame_id", "ds4")
         self.node.declare_parameter("imu_frame_id", "ds4_imu")
-        self.node.declare_parameter("autorepeat_rate", 0)
+        self.node.declare_parameter("autorepeat_rate", 0.0)
 
         self.use_standard_msgs = self.node.get_parameter("use_standard_msgs").value
         self.deadzone = self.node.get_parameter("deadzone").value

@@ -33,10 +33,13 @@ class StatusToTwist(object):
         param_axis = ["x", "y", "z"]
         for t, c, a in itertools.product(param_types, param_categories, param_axis):
             param_name = "{}.{}.{}".format(t, c, a)
-            self._node.declare_parameter(param_name)
+            if t == "inputs":
+                self._node.declare_parameter(param_name, "")
+            elif t == "scales":
+                self._node.declare_parameter(param_name, 0.0)
 
             param_value = self._node.get_parameter(param_name).value
-            if param_value is not None:
+            if param_value not in (None, ""):
                 param_dict[t][c][a] = param_value
 
         # Convert back to dict (in case a non-existent key is accessed later)
