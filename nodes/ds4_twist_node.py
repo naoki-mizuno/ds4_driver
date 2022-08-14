@@ -39,7 +39,7 @@ class StatusToTwist(object):
                 self._node.declare_parameter(param_name, 0.0)
 
             param_value = self._node.get_parameter(param_name).value
-            if param_value not in (None, 0.0, ""):
+            if param_value not in (None, ""):
                 param_dict[t][c][a] = param_value
 
         # Convert back to dict (in case a non-existent key is accessed later)
