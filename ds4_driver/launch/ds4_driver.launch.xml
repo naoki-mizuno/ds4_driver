@@ -2,7 +2,7 @@
 <launch>
   <arg name="addr" default="" />
   <arg name="use_standard_msgs" default="false" />
-  <arg name="autorepeat_rate" default="0" />
+  <arg name="autorepeat_rate" default="0.0" />
 
   <node pkg="ds4_driver" exec="ds4_driver_node.py" name="ds4_driver" output="screen" >
     <param from="$(find-pkg-share ds4_driver)/config/params.yaml" />

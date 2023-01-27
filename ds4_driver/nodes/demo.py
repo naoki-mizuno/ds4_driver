@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rclpy
-from ds4_driver.msg import Feedback, Status
+from ds4_driver_msgs.msg import Feedback, Status
 
 
 class Handler(object):

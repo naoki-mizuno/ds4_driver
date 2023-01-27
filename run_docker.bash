@@ -9,12 +9,12 @@ if [[ -n $DS4_DRIVER_LOCAL_PATH ]]; then
         -v "/dev:/dev" \
         --privileged \
         -v "$( realpath $DS4_DRIVER_LOCAL_PATH ):$_ws_prefix/src/ds4_driver" \
-        naomiz/ds4_driver:foxy \
+        naomiz/ds4_driver:humble \
         bash -c "colcon build && bash -i"
 else
     docker run -it \
         -v "/dev:/dev" \
         --privileged \
-        naomiz/ds4_driver:foxy \
+        naomiz/ds4_driver:humble \
         bash
 fi

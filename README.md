@@ -96,11 +96,11 @@ This is the main node that interacts with DualShock 4.
 
 #### Published
 
-- `/status` (`ds4_driver/Status`): current state of the device.
+- `/status` (`ds4_driver_msgs/Status`): current state of the device.
 
 #### Subscribed
 
-- `/set_feedback` (`ds4_driver/Feedback`): feedback for the device such as
+- `/set_feedback` (`ds4_driver_msgs/Feedback`): feedback for the device such as
   LED color, rumble, and LED flash.
 
 Note: To disable flash, send message with `set_led_flash: true` and
@@ -111,7 +111,7 @@ Note: To disable flash, send message with `set_led_flash: true` and
 
 #### Published
 
-- `/raw_report` (`ds4_driver/Report`): raw, uninterpreted report that the device
+- `/raw_report` (`ds4_driver_msgs/Report`): raw, uninterpreted report that the device
   sends.
 - `/battery` (`sensor_msgs/BatteryState`): battery state of the device.
 - `/joy` (`sensor_msgs/Joy`): joypad state.
@@ -148,7 +148,7 @@ for a DualShock 4.
 
 #### Subscribed
 
-- `/status` (`ds4_driver/Status`): joypad state.
+- `/status` (`ds4_driver_msgs/Status`): joypad state.
 
 ## Notes
 

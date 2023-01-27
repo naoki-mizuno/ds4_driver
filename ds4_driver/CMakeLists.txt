@@ -19,18 +19,8 @@ endif()
 # See: https://discourse.ros.org/t/mixed-python-cpp-ament-package/1452
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
-find_package(builtin_interfaces REQUIRED)
-find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
-
-rosidl_generate_interfaces(${PROJECT_NAME}
-    "msg/Feedback.msg"
-    "msg/Status.msg"
-    "msg/Report.msg"
-    "msg/Trackpad.msg"
-    DEPENDENCIES std_msgs builtin_interfaces sensor_msgs
-    LIBRARY_NAME ${PROJECT_NAME})
+find_package(ds4_driver_msgs REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

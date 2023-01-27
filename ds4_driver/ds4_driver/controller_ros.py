@@ -5,9 +5,9 @@ from sensor_msgs.msg import Joy
 from sensor_msgs.msg import JoyFeedback
 from sensor_msgs.msg import JoyFeedbackArray
 from sensor_msgs.msg import Imu
-from ds4_driver.msg import Feedback
-from ds4_driver.msg import Report
-from ds4_driver.msg import Status
+from ds4_driver_msgs.msg import Feedback
+from ds4_driver_msgs.msg import Report
+from ds4_driver_msgs.msg import Status
 
 import copy
 import math

@@ -2,7 +2,7 @@
 
 import rclpy
 from geometry_msgs.msg import Twist, TwistStamped
-from ds4_driver.msg import Status
+from ds4_driver_msgs.msg import Status
 
 from collections import defaultdict
 import itertools
