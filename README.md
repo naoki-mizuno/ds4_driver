@@ -1,7 +1,5 @@
 # ds4_driver
 
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/naoki-mizuno/ds4_driver.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/naoki-mizuno/ds4_driver/context:python)
-
 DualShock 4 driver for ROS.
 
 ## Features
