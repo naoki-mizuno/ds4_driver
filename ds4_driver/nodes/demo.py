@@ -28,10 +28,8 @@ class Handler(object):
         """
         now = self._node.get_clock().now()
 
-        # Commenting out this check for now because to_sec() does not seem to work for rclpy Duration objects
-        # This checks to see if the min interval for a callback has been violated.
-        # if (now - self._last_pub_time).to_sec() < self._min_interval:
-        #     return
+        if (now - self._last_pub_time).nanoseconds / 1e9 < self._min_interval:
+            return
 
         feedback = Feedback()
 

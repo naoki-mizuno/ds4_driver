@@ -25,6 +25,7 @@ class ControllerRos(Controller):
         self.node.declare_parameter("frame_id", "ds4")
         self.node.declare_parameter("imu_frame_id", "ds4_imu")
         self.node.declare_parameter("autorepeat_rate", 0.0)
+        self.node.declare_parameter("max_status_rate", 100.0)
 
         self.use_standard_msgs = self.node.get_parameter("use_standard_msgs").value
         self.deadzone = self.node.get_parameter("deadzone").value
@@ -32,9 +33,12 @@ class ControllerRos(Controller):
         self.imu_frame_id = self.node.get_parameter("imu_frame_id").value
         # Only publish Joy messages on change
         self._autorepeat_rate = self.node.get_parameter("autorepeat_rate").value
+        self._max_status_rate = self.node.get_parameter("max_status_rate").value
         self._prev_joy = None
 
         self.stop_rumble_timer = None
+
+        self._last_status_publish_time = None
 
         # Use ROS-standard messages (like sensor_msgs/Joy)
         if self.use_standard_msgs:
@@ -61,9 +65,15 @@ class ControllerRos(Controller):
         :param report:
         :return:
         """
+        now = self.node.get_clock().now()
+        if self._max_status_rate > 0 and self._last_status_publish_time is not None:
+            dt = (now - self._last_status_publish_time).nanoseconds / 1e9
+            if dt < (1 / self._max_status_rate):
+                return
+
         report_msg = Report()
         report_msg.header.frame_id = self.frame_id
-        report_msg.header.stamp = self.node.get_clock().now().to_msg()
+        report_msg.header.stamp = now.to_msg()
         for attr in dir(report):
             if attr.startswith("_"):
                 continue
@@ -99,6 +109,8 @@ class ControllerRos(Controller):
             self._prev_joy = joy_msg
         else:
             self.pub_status.publish(status_msg)
+
+        self._last_status_publish_time = now
 
     def cb_feedback(self, msg):
         """

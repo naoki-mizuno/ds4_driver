@@ -25,3 +25,6 @@ ds4_driver:
     # Amount by which the joystick has to move before it is considered to be
     # off-center.
     deadzone: 0.1
+
+    # Maximum rate in Hz to publish Status messages.
+    max_status_rate: 100.0
